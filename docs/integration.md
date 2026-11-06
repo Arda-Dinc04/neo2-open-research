@@ -13,6 +13,14 @@ may require a source-backed Wi-Fi attitude observation path or another validated
 transport. The current read-only frame boundary remains independent of that
 future transport choice.
 
+The separate camera worktree has since verified live browser WebRTC through a
+local MediaMTX bridge: 1280 × 720 at about 30 fps during an operator-ended
+100.563-second preview. It retains JPEG fallback and uses an English viewer.
+The bridge and signaling stay on loopback, while the Mac still switches Wi-Fi
+to the aircraft. This playback implementation does not implement the proposed
+orientation-viewer adapter below or establish concurrent USB telemetry. See
+[the video milestone evidence](video-goal.md).
+
 ## Orientation viewer contract
 
 The local viewer consumes the server's state snapshot at `GET /api/state`.

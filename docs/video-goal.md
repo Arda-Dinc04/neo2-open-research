@@ -17,6 +17,18 @@ source contains experimental flight functions that are outside this goal.
 
 ### Current result, 6 November 2026
 
+The separate Mac camera worktree now also displays actual aircraft video through
+a loopback MediaMTX/WebRTC bridge, with an English viewer and automatic JPEG
+fallback. The live trial observed **100.563 seconds** of preview and **2,999
+encoded frames**. Browser playback was **1280 × 720 at about 30 fps**, with
+2,892 total frames and 16 dropped frames reported at its last live sample.
+The operator ended the requested 120-second trial early by stopping or changing
+Wi-Fi. Original Wi-Fi restoration and camera cleanup passed; the termination
+label does not establish an unexpected dropout. A separate generated-video
+test verified fresh JPEG fallback after bridge shutdown. Display delay, longer
+WebRTC runs and reconnect recovery still need separate measurements. Aircraft
+USB remained disconnected, and Wi-Fi switching remains the current workflow.
+
 The operator confirmed an aircraft restart with DJI Fly closed and USB host
 disconnected. Mac-only startup produced 407 frames in the initial attempt.
 A follow-up Mac-only session ran for **478.925 seconds (7:59)**, decoded
