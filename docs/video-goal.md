@@ -17,6 +17,20 @@ source contains experimental flight functions that are outside this goal.
 
 ### Current result, 6 November 2026
 
+The operator confirmed an aircraft restart with DJI Fly closed and USB host
+disconnected. Mac-only startup produced 407 frames in the initial attempt.
+A follow-up Mac-only session ran for **478.925 seconds (7:59)**, decoded
+**13,855 preview frames**, and delivered **359,206,127 video bytes**. It ended
+when the operator stopped it. The operator explicitly relaxed the exact
+ten-minute target; no full 600-second pass is claimed. After ten seconds,
+the maximum observed video-delivery gap was 257 ms. Decoder cleanup passed.
+
+A separate earlier coordinator error classified discovery-beacon expiry as
+fatal despite fresh video. The preview status layer now reports that narrow
+case as a warning after service commit, retaining all stale-video, command
+and send-readiness restrictions. The regression suite passed 266 checks;
+another physical trial of the fix remains separate from the eight-minute run.
+
 The isolated Mac camera workstream has received and displayed actual aircraft
 video: 22,764,198 video bytes, 1,329 encoded preview frames, and a retained
 960 × 540 JPEG verified against the operator's live-page screenshot. Raw media,
@@ -26,20 +40,24 @@ USB-connected trials delivered no video. Concurrent USB orientation and Wi-Fi
 preview is therefore not an established integration path.
 
 Video arrived before the Mac service switch and encoder-refresh send. This run
-followed a phone DJI Fly preview, so it does not establish independent cold
-activation or isolate USB removal as the sole cause. Cold start without Fly is
-the next reproduction check; no new activation command has been established.
+followed a phone DJI Fly preview, so it did not by itself establish independent
+cold activation or isolate USB removal as the sole cause. The later restart
+test above demonstrated Mac-only startup; no new activation command was added.
 
-The session stopped at 47.672 seconds with a network error and stale/window
-overrun observations; all cleanup checks passed. First-frame reception is
-established. The ten-minute reliability, reconnect and timestamped recording
-milestones remain open; this is not a successful full 60-second stability test.
+The operator subsequently confirmed stopping the stream at 47.672 seconds;
+the app labeled termination `network_error`. This does not establish a spontaneous
+dropout. Rejected stale packets were at or behind the delivered frontier, so a
+forward receive-window overrun has not been demonstrated. All cleanup checks
+passed. The operator also attributed the slow connection to DJI Fly remaining
+connected. That first run was not a full 60-second stability test. The later
+Mac-only startup and longer preview results are recorded above. Exact 600-second
+completion, reconnect and timestamped recording are not established.
 
 | Milestone | Acceptance evidence |
 | --- | --- |
 | Mac compatibility | Document replacements or adapters for Linux-specific discovery, association and camera-session code; dependency/runtime checks pass on the Mac. Preserve a reviewed camera-only message allowlist. |
 | First live frame | Receive, reassemble and decode an actual frame from the current aircraft. Show source mode, receipt time, frame dimensions and stream identity. A fixture, saved clip or synthetic frame cannot satisfy this milestone. |
-| Reliable preview | Run a visible local preview for a documented test duration, initially 10 minutes. Bound queues; report received/displayed frame counts, drops, last-frame age and decode failures. Do not infer camera exposure latency from host receipt timestamps. |
+| Reliable preview | Run a visible local preview for a documented duration. Ten minutes was the initial target; the operator accepted the 7:59 follow-up as useful bench evidence. Bound queues; report received/displayed frame counts, drops, last-frame age and decode failures. Do not infer camera exposure latency from host receipt timestamps or general long-running reliability from one trial. |
 | Disconnect/reconnect | Loss of packets becomes visibly stale/disconnected. Reconnect or provide a clear restart procedure; no old image is silently presented as current. Record the observed recovery time and resource cleanup. |
 | Recording | Save the received elementary stream where available and/or the decoded recording, with explicit format and provenance. Record timestamps, frame counts, drops, source mode and recording start/stop events in a sidecar. Verify the saved file plays and covers the reported interval. |
 | Open-stack integration | Implement the agreed [read-only frame contract](integration.md), with camera lifecycle owned by the video process. No second reader claims the orientation observer's USB interface. |
