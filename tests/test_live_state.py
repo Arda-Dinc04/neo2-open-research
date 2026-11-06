@@ -120,6 +120,33 @@ class LiveStateTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.state.ingest(b'', float('nan'))
 
+    def test_response_and_unsupported_flags_cannot_refresh_orientation(self):
+        from transport.duml_observer import crc16
+        self.state.ingest(aircraft_packet() + gimbal_packet())
+        self.now += 2
+        packets = []
+        for original, flags in ((aircraft_packet(2), 0x80), (aircraft_packet(3), 0x60),
+                                (gimbal_packet(2), 0x80), (gimbal_packet(3), 0x20)):
+            data = bytearray(original)
+            data[8] = flags
+            data[-2:] = crc16(data[:-2]).to_bytes(2, 'little')
+            packets.append(bytes(data))
+        self.state.ingest(b''.join(packets))
+        result = self.state.snapshot()
+        self.assertEqual(result['status'], 'stale')
+        self.assertEqual(result['aircraft']['source']['sequence'], 1)
+        self.assertEqual(result['gimbal']['source']['sequence'], 1)
+        self.assertEqual(result['transport']['orientation_flags_rejected'], 4)
+
+    def test_fc_plaintext_push_ack_modes_are_accepted(self):
+        from transport.duml_observer import crc16
+        for flags in (0, 0x20, 0x40):
+            data = bytearray(aircraft_packet(flags + 1))
+            data[8] = flags
+            data[-2:] = crc16(data[:-2]).to_bytes(2, 'little')
+            self.state.ingest(data)
+            self.assertEqual(self.state.snapshot()['aircraft']['source']['sequence'], flags + 1)
+
 
 if __name__ == '__main__':
     unittest.main()

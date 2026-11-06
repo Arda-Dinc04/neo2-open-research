@@ -5,6 +5,15 @@ import unittest
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from transport.component_observer import gimbal_fields, fc_fields, component_summary
+from transport.duml_observer import Frame, crc16
+from transport.live_source import _synthetic_packet
+
+
+def frame(payload, flags=0, sender=3, command=(3, 0x43)):
+    data = bytearray(_synthetic_packet(sender, 10, command, 1, payload))
+    data[8] = flags
+    data[-2:] = crc16(data[:-2]).to_bytes(2, 'little')
+    return Frame(bytes(data))
 
 
 class ComponentObserverTests(unittest.TestCase):
@@ -40,6 +49,35 @@ class ComponentObserverTests(unittest.TestCase):
         result = component_summary([])
         self.assertEqual(result['gimbal']['frames'], 0)
         self.assertFalse(result['battery']['percentage_available'])
+        self.assertIsNone(result['battery']['legacy_osd_byte_40_hypothesis']['mapping_contradicted_by_range'])
+
+    def test_status_bits_remain_unverified_source_candidates(self):
+        payload = bytearray(85)
+        payload[30] = 0x86
+        struct.pack_into('<I', payload, 32, 0x0c)
+        fields = fc_fields(bytes(payload))['sdk_status_candidates']
+        self.assertEqual(fields['mode_code'], 6)
+        self.assertTrue(fields['motors_on_bit'])
+        self.assertTrue(fields['flying_pattern'])
+        self.assertFalse(fields['physical_state_semantics_verified'])
+
+    def test_legacy_battery_mapping_can_be_contradicted_but_never_auto_validated(self):
+        for value, contradicted in ((201, True), (50, False)):
+            payload = bytearray(85)
+            payload[40] = value
+            summary = component_summary([{'frames': [frame(bytes(payload))]}])
+            hypothesis = summary['battery']['legacy_osd_byte_40_hypothesis']
+            self.assertEqual(hypothesis['mapping_contradicted_by_range'], contradicted)
+            self.assertEqual(hypothesis['sample_count'], 1)
+            self.assertFalse(hypothesis['mapping_verified'])
+            self.assertFalse(summary['battery']['percentage_available'])
+
+    def test_response_packets_are_not_component_observations(self):
+        packets = [frame(bytes(85), flags=0x80), frame(bytes(50), flags=0x80, sender=4, command=(4, 5))]
+        summary = component_summary([{'frames': packets}])
+        self.assertEqual(summary['gimbal']['frames'], 0)
+        self.assertEqual(summary['flight_controller_osd']['frames'], 0)
+        self.assertEqual(summary['orientation_flags_rejected'], 2)
 
 
 if __name__ == '__main__':

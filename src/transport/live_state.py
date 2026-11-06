@@ -37,6 +37,7 @@ class LiveState:
         self._bytes = 0
         self._rejected = 0
         self._encrypted = 0
+        self._orientation_flags_rejected = 0
         self._frame_times = deque(maxlen=10000)
         self._history = deque(maxlen=history_limit)
 
@@ -88,8 +89,13 @@ class LiveState:
                 if frame.raw[8] & 7:
                     self._encrypted += 1
                     continue
+                aircraft = frame.sender == 3 and frame.command == (3, 0x43)
+                gimbal = frame.sender == 4 and frame.command == (4, 5)
+                if (aircraft and frame.raw[8] not in (0, 0x20, 0x40)) or (gimbal and frame.raw[8] != 0):
+                    self._orientation_flags_rejected += 1
+                    continue
                 try:
-                    if frame.sender == 3 and frame.command == (3, 0x43):
+                    if aircraft:
                         fields = fc_fields(frame.payload)
                         self._aircraft = {
                             'angles_deg': fields['attitude_degrees_sdk_order'],
@@ -103,7 +109,7 @@ class LiveState:
                                               'angles_deg': list(self._aircraft['angles_deg']),
                                               'source': self._source(frame)})
                         updated = True
-                    elif frame.sender == 4 and frame.command == (4, 5):
+                    elif gimbal:
                         fields = gimbal_fields(frame.payload)
                         self._gimbal = {
                             'angles_deg': fields['angles_degrees_sdk_order'],
@@ -167,6 +173,7 @@ class LiveState:
                     'pending_bytes': len(self._stream.buffer),
                     'layout_rejected': self._rejected,
                     'encrypted_frames_ignored': self._encrypted,
+                    'orientation_flags_rejected': self._orientation_flags_rejected,
                     'packet_rate_hz': len(self._frame_times),
                     'read_only': True, 'application_bytes_sent': 0,
                     'last_error': self._error, 'source_detail': self._source_detail,

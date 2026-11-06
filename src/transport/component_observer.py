@@ -26,11 +26,17 @@ def gimbal_fields(payload):
 def fc_fields(payload):
     if len(payload) != 85:
         raise ValueError('Expected the locally observed 85-byte FC OSD layout')
+    flags = struct.unpack_from('<I', payload, 32)[0]
     return {'attitude_tenths_raw': list(struct.unpack_from('<hhh', payload, 24)),
             'attitude_degrees_sdk_order': [v / 10 for v in struct.unpack_from('<hhh', payload, 24)],
             'relative_height_raw': struct.unpack_from('<h', payload, 16)[0],
             'relative_height_m_sdk_interpretation': struct.unpack_from('<h', payload, 16)[0] / 10,
             'velocity_raw': list(struct.unpack_from('<hhh', payload, 18)),
+            'sdk_status_candidates': {'controller_flags_raw': flags,
+                                      'mode_code': payload[30] & 0x7f,
+                                      'motors_on_bit': bool(flags & 8),
+                                      'flying_pattern': flags & 0x0e == 0x0c,
+                                      'physical_state_semantics_verified': False},
             'physical_units_and_axes_verified': False}
 
 
@@ -39,14 +45,23 @@ def component_summary(observations):
     gimbals, controllers = [], []
     commands = Counter()
     rejected = Counter()
+    legacy_battery_values = []
+    orientation_flags_rejected = 0
     for observation in observations:
         for frame in observation['frames']:
             commands[f'{frame.command[0]:02x}/{frame.command[1]:02x}'] += 1
+            flags = frame.raw[8]
+            aircraft = frame.sender == 3 and frame.command == (3, 0x43)
+            gimbal = frame.sender == 4 and frame.command == (4, 5)
+            if (aircraft and flags not in (0, 0x20, 0x40)) or (gimbal and flags != 0):
+                orientation_flags_rejected += 1
+                continue
             try:
-                if frame.sender == 4 and frame.command == (4, 5) and frame.raw[8] & 7 == 0:
+                if gimbal:
                     gimbals.append(gimbal_fields(frame.payload))
-                if frame.sender == 3 and frame.command == (3, 0x43) and frame.raw[8] & 7 == 0:
+                if aircraft:
                     controllers.append(fc_fields(frame.payload))
+                    legacy_battery_values.append(frame.payload[40])
             except ValueError:
                 rejected[f'{frame.command[0]:02x}/{frame.command[1]:02x}'] += 1
     def ranges(values, key):
@@ -68,8 +83,17 @@ def component_summary(observations):
                                   'attitude_degrees_sdk_order_ranges': ranges(controllers, 'attitude_degrees_sdk_order')},
         'battery': {'dedicated_03_55_frames': commands.get('03/55', 0),
                     'percentage_available': False,
-                    'reason': 'No validated battery decoder for these captured streams'},
+                    'reason': 'No validated battery decoder for these captured streams',
+                    'legacy_osd_byte_40_hypothesis': {
+                        'sample_count': len(legacy_battery_values),
+                        'min': min(legacy_battery_values) if legacy_battery_values else None,
+                        'max': max(legacy_battery_values) if legacy_battery_values else None,
+                        'outside_percent_range': sum(v > 100 for v in legacy_battery_values),
+                        'mapping_contradicted_by_range': any(v > 100 for v in legacy_battery_values) if legacy_battery_values else None,
+                        'mapping_verified': False,
+                        'limit': 'Values within 0–100 alone would not validate the legacy layout.'}},
         'rejected_layouts': dict(rejected),
+        'orientation_flags_rejected': orientation_flags_rejected,
         'interpretation_limits': ['SDK field mapping is not physical calibration.',
                                   'No camera/body alignment or capture-clock synchronization established.',
                                   'No physical chip ownership or transceiver endpoint inferred from host IDs.'],

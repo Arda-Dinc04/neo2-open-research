@@ -16,7 +16,7 @@ bench cycle; [results and limits](first-bench-findings.md) support candidate
 axis directions without certifying scale accuracy or repeatability. Absolute
 heading, camera alignment, sensor clocks and flight readiness remain unverified.
 
-At this milestone, 70 tests passed, including isolated loopback HTTP tests
+At this milestone, 75 tests passed, including isolated loopback HTTP tests
 with synthetic state. Native code builds with `-Wall -Wextra -Werror`.
 Replay/demo cannot record physical-validation markers; corrupt frames cannot
 refresh angles; local annotations do not become drone commands. Offline analysis
@@ -31,6 +31,9 @@ Physical installed/removed transceiver and measured repeatability tests remain p
 macOS registry correlation additionally verifies interface/network ancestry and
 identifier omission on synthetic trees. Real registry inspection found no
 network interface under the DJI device; the vendor viewer continued receiving.
+CRC-valid responses and unsupported command-type flags cannot refresh orientation.
+Offline battery-layout tests distinguish contradictory ranges from merely
+plausible values; no battery percentage or status-based action gate is enabled.
 
 No flight, firmware, driver-detach, reset, or application configuration commands
 were used by this viewer. The private historical identity-query tool is absent
