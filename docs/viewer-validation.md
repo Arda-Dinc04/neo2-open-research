@@ -16,7 +16,7 @@ bench cycle; [results and limits](first-bench-findings.md) support candidate
 axis directions without certifying scale accuracy or repeatability. Absolute
 heading, camera alignment, sensor clocks and flight readiness remain unverified.
 
-At this milestone, 54 tests passed, including isolated loopback HTTP tests
+At this milestone, 66 tests passed, including isolated loopback HTTP tests
 with synthetic state. Native code builds with `-Wall -Wextra -Werror`.
 Replay/demo cannot record physical-validation markers; corrupt frames cannot
 refresh angles; local annotations do not become drone commands. Offline analysis
@@ -25,6 +25,9 @@ The next-run recorder requires three samples spanning at least one second in
 a two-second window, addressing the sparse aircraft samples in the first run.
 Offline structural profiling additionally checks capture boundaries, encrypted
 data handling and omission of payload contents; see the passive packet findings.
+Cached USB inventory comparisons were verified independently of the viewer,
+including failure-versus-no-match handling, malformed input and helper timeouts.
+Physical installed/removed transceiver and measured repeatability tests remain pending.
 
 No flight, firmware, driver-detach, reset, or application configuration commands
 were used by this viewer. The private historical identity-query tool is absent

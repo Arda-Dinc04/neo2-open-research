@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Build the receive-only helper using an existing compiler/libusb installation."""
+"""Build an observation helper using an existing compiler/libusb installation."""
+import argparse
 from pathlib import Path
 import shlex
 import shutil
@@ -9,6 +10,9 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--target', choices=('usb_stream', 'usb_descriptors'), default='usb_stream')
+    args = parser.parse_args()
     compiler = shutil.which('clang') or shutil.which('cc')
     if not compiler:
         raise SystemExit('A C compiler is required; no software was installed.')
@@ -25,9 +29,11 @@ def main():
     if flags is None:
         raise SystemExit('libusb development files were not found. Nothing was installed.')
     (ROOT / 'build').mkdir(exist_ok=True)
-    subprocess.run([compiler, '-Wall', '-Wextra', '-Werror', str(ROOT / 'native/usb_stream.c'),
-                    *flags, '-o', str(ROOT / 'build/usb_stream')], check=True)
-    print('Built receive-only helper: build/usb_stream')
+    source = ROOT / ('native/usb_stream.c' if args.target == 'usb_stream'
+                     else 'diagnostics/usb_descriptors.c')
+    subprocess.run([compiler, '-Wall', '-Wextra', '-Werror', str(source),
+                    *flags, '-o', str(ROOT / 'build' / args.target)], check=True)
+    print('Built observation helper: build/' + args.target)
 
 
 if __name__ == '__main__':

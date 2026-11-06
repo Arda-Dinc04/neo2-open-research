@@ -73,5 +73,9 @@ ownership by itself. An unchanged composite descriptor would not show that
 the module is unused. Do not probe other command IDs, enter RF test modes,
 or change firmware to make this comparison.
 
+The [cached inventory and offline comparison tools](usb-comparison.md) implement
+the descriptor portion and preserve unknown physical conditions. Current
+unchanged-observation checks verify the software, not installed/removed behavior.
+
 This source-only investigation performed no hardware operations and sent no
 drone requests. The full component map remains in [components.md](components.md).

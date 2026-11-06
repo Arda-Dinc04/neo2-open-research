@@ -1,4 +1,5 @@
 /* Optional libusb inspection. Default: cached descriptors only, no open/claim.
+ * --all-dji widens only the cached VID filter to include other DJI PIDs.
  * --read-descriptors additionally opens the device and allows ONLY standard
  * USB GET_DESCRIPTOR (0x80/0x06), bounded to 4096 bytes and a 1000 ms timeout.
  * No set-configuration, interface claim, reset, vendor requests or bulk I/O.
@@ -21,8 +22,9 @@ static int read_descriptor(libusb_device_handle *handle, uint8_t type,
 
 int main(int argc, char **argv) {
     int active = argc == 2 && strcmp(argv[1], "--read-descriptors") == 0;
-    if (argc > 1 && !active) {
-        fprintf(stderr, "Usage: usb_descriptors [--read-descriptors]\n");
+    int all_dji = argc == 2 && strcmp(argv[1], "--all-dji") == 0;
+    if (argc > 1 && !active && !all_dji) {
+        fprintf(stderr, "Usage: usb_descriptors [--read-descriptors | --all-dji]\n");
         return 2;
     }
     libusb_context *ctx = NULL;
@@ -45,13 +47,16 @@ int main(int argc, char **argv) {
         struct libusb_device_descriptor dev;
         rc = libusb_get_device_descriptor(list[d], &dev);
         if (rc < 0) { errors++; continue; }
-        if (dev.idVendor != 0x2ca3 || dev.idProduct != 0x0020) continue;
+        if (dev.idVendor != 0x2ca3 || (!all_dji && dev.idProduct != 0x0020)) continue;
         found++;
         if (!first_device) printf(",");
         first_device = 0;
-        printf("{\"vid\":%u,\"pid\":%u,\"bus\":%u,\"address\":%u,\"configurations\":[",
+        printf("{\"vid\":%u,\"pid\":%u,\"bus\":%u,\"address\":%u,"
+               "\"bcd_usb\":%u,\"bcd_device\":%u,\"device_class\":%u,"
+               "\"device_subclass\":%u,\"device_protocol\":%u,\"configurations\":[",
                dev.idVendor, dev.idProduct, libusb_get_bus_number(list[d]),
-               libusb_get_device_address(list[d]));
+               libusb_get_device_address(list[d]), dev.bcdUSB, dev.bcdDevice,
+               dev.bDeviceClass, dev.bDeviceSubClass, dev.bDeviceProtocol);
         for (uint8_t ci = 0; ci < dev.bNumConfigurations; ci++) {
             if (ci) printf(",");
             struct libusb_config_descriptor *cfg = NULL;
@@ -61,8 +66,9 @@ int main(int argc, char **argv) {
                 errors++;
                 continue;
             }
-            printf("{\"configuration_value\":%u,\"configuration_string_index\":%u,\"interfaces\":[",
-                   cfg->bConfigurationValue, cfg->iConfiguration);
+            printf("{\"configuration_value\":%u,\"configuration_string_index\":%u,"
+                   "\"attributes\":%u,\"max_power_raw\":%u,\"interfaces\":[",
+                   cfg->bConfigurationValue, cfg->iConfiguration, cfg->bmAttributes, cfg->MaxPower);
             int first_iface = 1;
             for (uint8_t ii = 0; ii < cfg->bNumInterfaces; ii++) {
                 const struct libusb_interface *iface = &cfg->interface[ii];
@@ -76,9 +82,10 @@ int main(int argc, char **argv) {
                     for (uint8_t ei = 0; ei < alt->bNumEndpoints; ei++) {
                         const struct libusb_endpoint_descriptor *ep = &alt->endpoint[ei];
                         if (ei) printf(",");
-                        printf("{\"address\":%u,\"direction\":\"%s\",\"transfer_type\":%u,\"max_packet_size\":%u}",
+                        printf("{\"address\":%u,\"direction\":\"%s\",\"transfer_type\":%u,"
+                               "\"max_packet_size\":%u,\"interval_raw\":%u}",
                                ep->bEndpointAddress, (ep->bEndpointAddress & 0x80) ? "IN" : "OUT",
-                               ep->bmAttributes & 3, ep->wMaxPacketSize);
+                               ep->bmAttributes & 3, ep->wMaxPacketSize, ep->bInterval);
                     }
                     printf("]}");
                 }

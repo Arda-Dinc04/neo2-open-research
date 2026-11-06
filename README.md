@@ -32,6 +32,17 @@ interface. It has no bulk OUT, vendor-request, reset, driver-detach, configurati
 flight, or firmware command path. Standard descriptor reads are used for
 identification. Reads consume endpoint data; this is not a bus sniffer.
 
+For a separate cached descriptor inventory that does not claim interfaces:
+
+```sh
+python3 tools/build_helper.py --target usb_descriptors
+python3 diagnostics/usb_inventory.py capture --output /path/to/new-inventory.json
+```
+
+See the [USB comparison workflow](docs/usb-comparison.md) for offline diffs,
+physical-state labels and limitations. Inventory excludes serial/product strings
+and temporary bus addresses; an unavailable observation is inconclusive.
+
 ## Instruments and bench annotations
 
 One exploratory bench cycle supports aircraft A=pitch, B=roll, C=yaw, positive
@@ -111,7 +122,7 @@ python3 tools/package_release.py
 ```
 
 Tests cover framing, split/corrupt data, modes, stale states, source provenance,
-angle wrap and local HTTP annotations. HTTP tests bind an isolated loopback
+angle wrap, cached USB comparison and local HTTP annotations. HTTP tests bind an isolated loopback
 server with synthetic state; tests do not operate hardware. Source releases
 exclude session records, raw captures, native binaries and local identifiers.
 
