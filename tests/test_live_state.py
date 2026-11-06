@@ -1,5 +1,6 @@
 from pathlib import Path
 import struct
+import json
 import sys
 import unittest
 
@@ -146,6 +147,60 @@ class LiveStateTests(unittest.TestCase):
             data[-2:] = crc16(data[:-2]).to_bytes(2, 'little')
             self.state.ingest(data)
             self.assertEqual(self.state.snapshot()['aircraft']['source']['sequence'], flags + 1)
+
+    def test_route_census_retains_only_headers_and_independent_receipt_age(self):
+        packet = _synthetic_packet(4, 42, (0, 241), 0x1234, b'PRIVATE-PAYLOAD')
+        self.state.ingest(packet)
+        self.now += 0.5
+        self.state.ingest(packet)
+        self.now += 0.25
+        census = self.state.snapshot()['route_census']
+        self.assertEqual(census['mode'], 'live')
+        self.assertEqual(census['frame_count_total'], 2)
+        self.assertEqual(census['routes'][0]['frames'], 2)
+        self.assertEqual(census['routes'][0]['last_seen_age_ms'], 250)
+        self.assertNotIn('PRIVATE-PAYLOAD', json.dumps(census))
+        self.assertNotIn(b'PRIVATE-PAYLOAD'.hex(), json.dumps(census))
+        self.assertNotIn('sequence', census['routes'][0])
+        census['routes'][0]['frames'] = 999
+        self.assertEqual(self.state.snapshot()['route_census']['routes'][0]['frames'], 2)
+        self.assertIsNone(self.state.snapshot()['aircraft'])
+
+    def test_route_census_overflow_is_bounded_and_accounted_without_eviction(self):
+        state = LiveState(clock=lambda: self.now, route_limit=2)
+        for command in (1, 2, 3, 1):
+            state.ingest(_synthetic_packet(8, 10, (0, command), command, b'x'))
+        census = state.snapshot()['route_census']
+        self.assertEqual(len(census['routes']), 2)
+        self.assertEqual(census['frame_count_total'], 4)
+        self.assertEqual(census['frames_omitted_by_route_limit'], 1)
+        self.assertEqual(sum(r['frames'] for r in census['routes']), 3)
+        self.assertFalse(census['retained_counts_complete'])
+        for limit in (0, 513, True):
+            with self.assertRaises(ValueError): LiveState(route_limit=limit)
+
+    def test_route_census_crc_gate_and_split_boundaries(self):
+        packet = aircraft_packet()
+        self.state.ingest(packet[:20])
+        self.assertEqual(self.state.snapshot()['route_census']['frame_count_total'], 0)
+        self.state.ingest(packet[20:])
+        corrupt = bytearray(packet)
+        corrupt[-1] ^= 1
+        self.state.ingest(corrupt)
+        self.assertEqual(self.state.snapshot()['route_census']['routes'][0]['frames'], 1)
+
+    def test_route_census_provenance_and_rejected_payloads_remain_distinct(self):
+        from transport.duml_observer import crc16
+        for mode in ('replay', 'demo'):
+            state = LiveState(mode=mode, clock=lambda: self.now)
+            packet = bytearray(aircraft_packet())
+            packet[8] = 0x81
+            packet[-2:] = crc16(packet[:-2]).to_bytes(2, 'little')
+            state.ingest(packet)
+            result = state.snapshot()
+            self.assertEqual(result['route_census']['mode'], mode)
+            self.assertEqual(result['route_census']['routes'][0]['flags_hex'], '81')
+            self.assertIsNone(result['aircraft'])
 
 
 if __name__ == '__main__':

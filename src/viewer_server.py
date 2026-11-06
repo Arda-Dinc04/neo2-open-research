@@ -186,6 +186,12 @@ class ViewerHandler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path
         if path == '/api/state':
             self._reply(200, self.server.application.snapshot())
+        elif path == '/api/routes':
+            census = self.server.application.state.snapshot().get('route_census')
+            if census is None:
+                self._reply(503, {'error': 'Route census unavailable from this source'})
+            else:
+                self._reply(200, census)
         elif path == '/api/bench/export.json':
             self._reply(200, self.server.application.bench.export(), download=True)
         elif path == '/healthz':

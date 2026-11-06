@@ -64,6 +64,11 @@ alignment and absolute heading remain unverified.
 Each channel has its own receipt age and stale indicator. Mac receipt time
 is not a verified sensor timestamp.
 
+`GET /api/routes` provides a [bounded live header census](docs/live-route-census.md)
+with mode provenance, route counts and receipt ages, excluding payload values,
+angle data and the application's session token. It uses the existing receive
+pipeline and sends no requests to discover additional message types.
+
 **Zero this view** changes only that browser's display. It does not change
 raw readings, exported bench measurements, or the aircraft.
 

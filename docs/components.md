@@ -13,7 +13,7 @@ comparison remains necessary to investigate ownership. See
 | Component or path | Evidence | Current capability | Unknown / next evidence |
 | --- | --- | --- | --- |
 | Aircraft USB composite device | Physical unplug/replug tied the observed `2ca3:0020` device to the aircraft; configuration 1 exposed eight interfaces | Enumeration, standard descriptors, device/interface inventory | Compatibility across versions and installation states |
-| Vendor interface 4 | Powered-on IN `0x85` produced CRC-valid DUML; paired OUT descriptor is `0x04` | Receive-only stream, provenance, routing census, bounded recorder | Host-originated request forwarding/session rules |
+| Vendor interface 4 | Powered-on IN `0x85` produced CRC-valid DUML; paired OUT descriptor is `0x04`; 1,790 more frames reproduced six idle routes in a 105.235-second live window | Receive-only stream, provenance, bounded live header census, offline profiles and bench annotations | Host-originated request forwarding/session rules and newly arriving component-specific messages |
 | Vendor interfaces 3, 5, 6, 7 | Claim/read/release succeeded; short idle windows were silent | Descriptor inventory | Application functions and physical owners; silence does not prove unused |
 | Flight-controller logical host | `03 → 0a`, command `03/43`, 85-byte payloads; one exploratory body-motion cycle | Candidate A=pitch, B=roll, C=yaw and positive directions documented in [first bench findings](first-bench-findings.md) | Repeated measured axis/scale checks, reference frame, timing and calibration |
 | Gimbal logical host | `04 → 2a`, command `04/05`, 50-byte payloads; DJI specifies a two-axis tilt/roll mechanism | Provisional angle and quaternion fields; received quaternion norms near 1 | SDK yaw is not proof of a third mechanical motor; stabilization convention, quaternion order/reference frame and camera alignment remain unknown |
@@ -64,6 +64,7 @@ being replaced with zero.
 - [Physical hardware photo map and manufacturer sensing specifications](hardware-photo-map.md).
 - [macOS driver-binding observations](macos-driver-bindings.md).
 - [Status candidates and rejected battery mapping](status-battery-findings.md).
+- [Live header census and observed unchanged-setup window](live-route-census.md).
 - [Pinned upstream USB census](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/tools/capture_usb_duml.py).
 - [Pinned gimbal decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/gimbal_telemetry.py) and [FC decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/telemetry.py).
 - [DJI connection guide](https://repair.dji.com/help/content?customId=01700043608&lang=en&paperDocType=ARTICLE&spaceId=17) and [Neo 2 manual](https://dl.djicdn.com/downloads/DJI_Neo_2/UM/20251210/DJI_Neo_2_User_Manual_v1.2_en.pdf).

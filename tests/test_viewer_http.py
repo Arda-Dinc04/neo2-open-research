@@ -5,6 +5,7 @@ import sys
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from viewer_server import ViewerApplication, ViewerServer
@@ -91,6 +92,22 @@ class ViewerHttpTests(unittest.TestCase):
         headers = self.annotations()
         headers['Content-Length'] = '9000'
         self.assertEqual(self.request('POST', '/api/bench/marker', '{}', headers)[0], 409)
+
+    def test_header_route_endpoint_exports_no_application_token_or_angles(self):
+        from transport.live_state import LiveState
+        from transport.live_source import _synthetic_packet
+        state = LiveState(mode='demo')
+        state.ingest(_synthetic_packet(4, 42, (0, 241), 1, b'PRIVATE-PAYLOAD'))
+        with patch.object(self.app, 'state', state):
+            status, _, raw = self.request('GET', '/api/routes')
+        result = json.loads(raw)
+        self.assertEqual(status, 200)
+        self.assertEqual(result['mode'], 'demo')
+        self.assertEqual(result['frame_count_total'], 1)
+        self.assertNotIn('api_token', result)
+        self.assertNotIn('PRIVATE-PAYLOAD', raw.decode())
+        self.assertNotIn('angles_deg', raw.decode())
+        self.assertEqual(self.request('GET', '/api/routes')[0], 503)
 
 
 if __name__ == '__main__':

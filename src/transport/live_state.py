@@ -2,6 +2,7 @@
 from collections import deque
 import copy
 import math
+import secrets
 import threading
 import time
 
@@ -11,11 +12,13 @@ from .duml_observer import Stream
 
 class LiveState:
     def __init__(self, mode='live', *, clock=time.monotonic, stale_after=1.0,
-                 history_limit=1800):
+                 history_limit=1800, route_limit=128):
         if mode not in ('live', 'replay', 'demo'):
             raise ValueError('Unknown source mode')
         if not 0 < stale_after <= 60 or history_limit < 1:
             raise ValueError('Invalid state bounds')
+        if type(route_limit) is not int or not 1 <= route_limit <= 512:
+            raise ValueError('Route limit must be an integer from 1 to 512')
         self.mode = mode
         self.clock = clock
         self.stale_after = float(stale_after)
@@ -38,6 +41,10 @@ class LiveState:
         self._rejected = 0
         self._encrypted = 0
         self._orientation_flags_rejected = 0
+        self._observer_session = secrets.token_hex(8)
+        self._route_limit = route_limit
+        self._routes = {}
+        self._route_frames_omitted = 0
         self._frame_times = deque(maxlen=10000)
         self._history = deque(maxlen=history_limit)
 
@@ -86,6 +93,20 @@ class LiveState:
             for frame in frames:
                 self._last_frame = received_at
                 self._frame_times.append(received_at)
+                # Header-only census precedes payload interpretation. Unknown,
+                # response and encrypted routes remain visible without ever
+                # making their payloads available or refreshing orientation.
+                key = (frame.sender, frame.receiver, *frame.command, frame.raw[8], len(frame.payload))
+                route = self._routes.get(key)
+                if route is None:
+                    if len(self._routes) < self._route_limit:
+                        route = {'frames': 0, 'first': received_at, 'last': received_at}
+                        self._routes[key] = route
+                    else:
+                        self._route_frames_omitted += 1
+                if route is not None:
+                    route['frames'] += 1
+                    route['last'] = received_at
                 if frame.raw[8] & 7:
                     self._encrypted += 1
                     continue
@@ -179,6 +200,26 @@ class LiveState:
                     'last_error': self._error, 'source_detail': self._source_detail,
                 },
                 'aircraft': channel(self._aircraft), 'gimbal': channel(self._gimbal),
+                'route_census': {
+                    'schema': 'neo2.route-census.v1', 'mode': self.mode,
+                    'observer_session_id': self._observer_session,
+                    'scope': 'CRC-valid frames delivered to this reader; header fields only',
+                    'clock_basis': 'PC monotonic receipt time; sensor clock unverified',
+                    'observation_elapsed_s': round(max(0.0, current - self._started), 3),
+                    'frame_count_total': self._frames, 'route_limit': self._route_limit,
+                    'frames_omitted_by_route_limit': self._route_frames_omitted,
+                    'retained_counts_complete': self._route_frames_omitted == 0,
+                    'routes': [{'sender': f'{key[0]:02x}', 'receiver': f'{key[1]:02x}',
+                                'command': f'{key[2]:02x}/{key[3]:02x}', 'flags_hex': f'{key[4]:02x}',
+                                'payload_length': key[5], 'frames': route['frames'],
+                                'first_seen_uptime_s': round(max(0.0, route['first'] - self._started), 3),
+                                'last_seen_age_ms': round(max(0.0, current - route['last']) * 1000, 1)}
+                               for key, route in sorted(self._routes.items())],
+                    'payload_values_exported': False,
+                    'limits': ['Counts cover this observer session only, not the complete USB bus.',
+                               'Session restart resets counts; omitted-route frames are explicitly counted.',
+                               'Header counts establish neither component ownership nor payload semantics.'],
+                },
                 'physical_calibration_verified': False,
                 'clock_basis': 'PC monotonic receipt time; sensor clock unverified',
             }
