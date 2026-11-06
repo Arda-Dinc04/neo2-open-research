@@ -15,6 +15,26 @@ source contains experimental flight functions that are outside this goal.
 
 ## Milestones and acceptance
 
+### Current result, 6 November 2026
+
+The isolated Mac camera workstream has received and displayed actual aircraft
+video: 22,764,198 video bytes, 1,329 encoded preview frames, and a retained
+960 × 540 JPEG verified against the operator's live-page screenshot. Raw media,
+stream identity and host packet-receipt timestamps remain private. The external
+USB cable's Mac end was unplugged; the transceiver stayed installed. Earlier
+USB-connected trials delivered no video. Concurrent USB orientation and Wi-Fi
+preview is therefore not an established integration path.
+
+Video arrived before the Mac service switch and encoder-refresh send. This run
+followed a phone DJI Fly preview, so it does not establish independent cold
+activation or isolate USB removal as the sole cause. Cold start without Fly is
+the next reproduction check; no new activation command has been established.
+
+The session stopped at 47.672 seconds with a network error and stale/window
+overrun observations; all cleanup checks passed. First-frame reception is
+established. The ten-minute reliability, reconnect and timestamped recording
+milestones remain open; this is not a successful full 60-second stability test.
+
 | Milestone | Acceptance evidence |
 | --- | --- |
 | Mac compatibility | Document replacements or adapters for Linux-specific discovery, association and camera-session code; dependency/runtime checks pass on the Mac. Preserve a reviewed camera-only message allowlist. |

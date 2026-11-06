@@ -5,6 +5,14 @@ process owns camera discovery, association, session, decoding and recording.
 Integrate observations above those transports rather than making either
 process claim the other's device interface or operate its session.
 
+The first actual Mac video trial worked with the external USB host connection
+removed and the transceiver still installed. USB-connected trials delivered no
+video in the observed bench setup. Concurrent USB orientation plus Wi-Fi camera
+preview is unverified; do not advertise that combination as working. Integration
+may require a source-backed Wi-Fi attitude observation path or another validated
+transport. The current read-only frame boundary remains independent of that
+future transport choice.
+
 ## Orientation viewer contract
 
 The local viewer consumes the server's state snapshot at `GET /api/state`.
