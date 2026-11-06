@@ -26,7 +26,7 @@ comparison remains necessary to investigate ownership. See
 | Camera and media storage | Mounted storage exposed generic `DCIM` / `MISC` directories | Read-only media-directory access | Live frames, exposure timing and camera/body transform; owned by video workstream |
 | Aircraft Wi-Fi / BLE | Official product documentation and public Neo 2 client source describe these paths | Source research only for this Mac | Mac compatibility, observed device discovery and camera-only session initialization |
 | Digital Transceiver DEP1 / O4 | DJI documents compatible controller/goggles operation; internal photos show a separate USB-C connector PCB and shielded main board; installed state is operator-reported | Physical connection documentation and board inventory | Chipset and electrical USB path, separate USB identity, logical host, component telemetry, generic Mac radio API, ground-side bridge |
-| RNDIS interfaces 0–1 | Control/data descriptors present | Inventory | Working Mac network binding and any aircraft service reachable through that path |
+| RNDIS interfaces 0–1 | Control/data descriptors present; observed macOS registry showed no attached child services or correlated network interface | Descriptor and host-binding inventory; no working USB network path established on this Mac | Firmware-side services, alternative host binding, and network/session behavior; no addresses or services probed |
 | Storage interface 2 | Mass-storage driver and filesystem path observed | Existing OS-mediated reads | Other storage/service functions; no partition or firmware access attempted |
 
 Logical DUML host bytes encode `type = byte & 0x1f` and
@@ -62,6 +62,7 @@ being replaced with zero.
 - [Local routing findings](usb_routing.md) and [source provenance](routing-source-provenance.json).
 - [Passive packet structure](passive-packet-findings.md) and [legacy-label provenance](packet-source-provenance.json).
 - [Physical hardware photo map and manufacturer sensing specifications](hardware-photo-map.md).
+- [macOS driver-binding observations](macos-driver-bindings.md).
 - [Pinned upstream USB census](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/tools/capture_usb_duml.py).
 - [Pinned gimbal decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/gimbal_telemetry.py) and [FC decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/telemetry.py).
 - [DJI connection guide](https://repair.dji.com/help/content?customId=01700043608&lang=en&paperDocType=ARTICLE&spaceId=17) and [Neo 2 manual](https://dl.djicdn.com/downloads/DJI_Neo_2/UM/20251210/DJI_Neo_2_User_Manual_v1.2_en.pdf).

@@ -43,6 +43,16 @@ See the [USB comparison workflow](docs/usb-comparison.md) for offline diffs,
 physical-state labels and limitations. Inventory excludes serial/product strings
 and temporary bus addresses; an unavailable observation is inconclusive.
 
+On macOS, inspect the existing driver tree without opening USB interfaces:
+
+```sh
+python3 diagnostics/macos_usb_bindings.py --output /path/to/new-bindings.json
+```
+
+The observed RNDIS interfaces had no attached network service on the tested
+Mac. See [driver-binding findings](docs/macos-driver-bindings.md); this does not
+establish firmware-side network capabilities or a reason to install drivers.
+
 ## Instruments and bench annotations
 
 One exploratory bench cycle supports aircraft A=pitch, B=roll, C=yaw, positive
