@@ -1,0 +1,195 @@
+{
+  "total_frames": 2065,
+  "addresses": [
+    {
+      "wire_hex": "03",
+      "type": 3,
+      "instance": 0,
+      "source_label": "flight-controller (legacy type label)"
+    },
+    {
+      "wire_hex": "04",
+      "type": 4,
+      "instance": 0,
+      "source_label": "gimbal (legacy type label)"
+    },
+    {
+      "wire_hex": "0a",
+      "type": 10,
+      "instance": 0,
+      "source_label": "PC (legacy type label)"
+    },
+    {
+      "wire_hex": "2a",
+      "type": 10,
+      "instance": 1,
+      "source_label": "PC (legacy type label)"
+    },
+    {
+      "wire_hex": "48",
+      "type": 8,
+      "instance": 2,
+      "source_label": "air-side processor (legacy type label)"
+    },
+    {
+      "wire_hex": "8a",
+      "type": 10,
+      "instance": 4,
+      "source_label": "PC (legacy type label)"
+    },
+    {
+      "wire_hex": "92",
+      "type": 18,
+      "instance": 4,
+      "source_label": "vision processor (legacy type label)"
+    }
+  ],
+  "routes": [
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "03",
+        "type": 3,
+        "instance": 0,
+        "source_label": "flight-controller (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "0a",
+        "type": 10,
+        "instance": 0,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "03/43",
+      "count": 243,
+      "payload_lengths": [
+        85
+      ]
+    },
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "04",
+        "type": 4,
+        "instance": 0,
+        "source_label": "gimbal (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "2a",
+        "type": 10,
+        "instance": 1,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "00/f1",
+      "count": 121,
+      "payload_lengths": [
+        8
+      ]
+    },
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "04",
+        "type": 4,
+        "instance": 0,
+        "source_label": "gimbal (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "2a",
+        "type": 10,
+        "instance": 1,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "04/05",
+      "count": 1215,
+      "payload_lengths": [
+        50
+      ]
+    },
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "04",
+        "type": 4,
+        "instance": 0,
+        "source_label": "gimbal (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "8a",
+        "type": 10,
+        "instance": 4,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "00/f1",
+      "count": 121,
+      "payload_lengths": [
+        8
+      ]
+    },
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "48",
+        "type": 8,
+        "instance": 2,
+        "source_label": "air-side processor (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "2a",
+        "type": 10,
+        "instance": 1,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "00/82",
+      "count": 122,
+      "payload_lengths": [
+        64
+      ]
+    },
+    {
+      "interface": 4,
+      "sender": {
+        "wire_hex": "92",
+        "type": 18,
+        "instance": 4,
+        "source_label": "vision processor (legacy type label)"
+      },
+      "receiver": {
+        "wire_hex": "2a",
+        "type": 10,
+        "instance": 1,
+        "source_label": "PC (legacy type label)"
+      },
+      "command": "03/ce",
+      "count": 243,
+      "payload_lengths": [
+        28
+      ]
+    }
+  ],
+  "flags": {
+    "00": 1943,
+    "40": 122
+  },
+  "encrypted_frames": 0,
+  "response_flag_frames": 0,
+  "query_search": {
+    "sequence_hex": "8101",
+    "exact_reply_hits": [],
+    "device_info_any_address_or_sequence": [],
+    "query_sequence_any_address_or_command": []
+  },
+  "possible_session_envelopes": {
+    "51/01_forwarded": 0,
+    "00/99_subscription_agent": 0,
+    "07/93_wifi_registration": 0
+  },
+  "limits": [
+    "Addresses identify logical type and instance, not physical chip ownership.",
+    "Idle RX captures do not establish the host TX/session-initialization sequence.",
+    "Absence of a reply does not distinguish command support, routing, or session policy."
+  ],
+  "aggregate_only": true,
+  "gimbal_frames_offline_decoded": 84,
+  "fc_osd_frames_offline_inspected": 17,
+  "physical_calibration_verified": false
+}

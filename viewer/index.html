@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Neo / bench instruments</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Neo bench instruments home">neo<span class="wordmark-slash">/</span><span class="wordmark-sub">OPEN RESEARCH</span></a>
+    <div class="header-right"><span class="read-only"><span class="lock-symbol" aria-hidden="true">↙</span> USB RECEIVE ONLY</span><span class="version">BENCH / 01</span></div>
+  </header>
+
+  <main>
+    <section class="page-heading" aria-labelledby="page-title">
+      <div><p class="eyebrow">AIRCRAFT + CAMERA GIMBAL</p><h1 id="page-title">Orientation lab<span class="title-dot">.</span></h1><p class="intro">Watch the aircraft. Observe the gimbal. Validate the axes.</p></div>
+      <div class="connection-summary"><span id="mode-badge" class="mode-badge mode-waiting">WAITING FOR SOURCE</span><div class="connection-line"><span id="connection-dot" class="status-dot"></span><span id="connection-label">Connecting to local viewer</span></div><p id="connection-detail">No orientation data received.</p></div>
+    </section>
+
+    <div id="source-notice" class="notice notice-waiting" role="status"><span class="notice-symbol" aria-hidden="true">○</span><span id="source-notice-text">Waiting for the local receive-only service. Values remain unavailable until data arrives.</span></div>
+
+    <section class="instrument-grid" aria-label="Orientation instruments">
+      <article id="aircraft-panel" class="instrument-panel is-unavailable">
+        <div class="panel-heading"><div><p class="eyebrow">01 / FLIGHT CONTROLLER</p><h2>Aircraft orientation</h2></div><span id="aircraft-freshness" class="freshness">NO DATA</span></div>
+        <div class="instrument-visual"><canvas id="aircraft-canvas" role="img" aria-label="Illustrative aircraft pose; candidate axes from one bench cycle are not calibrated"></canvas><div class="visual-label"><span class="view-label">CANDIDATE BODY VIEW</span><span id="aircraft-zero-label" class="zero-label">ABSOLUTE FIELDS</span></div></div>
+        <div id="aircraft-angles" class="angle-grid"><div class="angle-cell axis-a"><span class="angle-name">A <span class="angle-hint">PITCH CANDIDATE</span></span><div><strong id="aircraft-a">—</strong><span class="unit">°</span></div></div><div class="angle-cell axis-b"><span class="angle-name">B <span class="angle-hint">ROLL CANDIDATE</span></span><div><strong id="aircraft-b">—</strong><span class="unit">°</span></div></div><div class="angle-cell axis-c"><span class="angle-name">C <span class="angle-hint">YAW CANDIDATE</span></span><div><strong id="aircraft-c">—</strong><span class="unit">°</span></div></div></div>
+        <div class="panel-foot"><span id="aircraft-source" class="source-text">03 → 0a · 03/43 · awaiting frames</span><button id="aircraft-zero" class="text-button" disabled>Zero this view <span aria-hidden="true">↗</span></button></div>
+      </article>
+
+      <article id="gimbal-panel" class="instrument-panel is-unavailable">
+        <div class="panel-heading"><div><p class="eyebrow">02 / CAMERA GIMBAL</p><h2>Gimbal orientation</h2></div><span id="gimbal-freshness" class="freshness">NO DATA</span></div>
+        <div class="instrument-visual"><canvas id="gimbal-canvas" role="img" aria-label="Illustrative gimbal pose; physical axes and reference frame are unverified"></canvas><div class="visual-label"><span class="view-label">ILLUSTRATIVE CAMERA VIEW</span><span id="gimbal-zero-label" class="zero-label">ABSOLUTE FIELDS</span></div></div>
+        <div id="gimbal-angles" class="angle-grid"><div class="angle-cell axis-a"><span class="angle-name">PITCH <span class="angle-hint">SDK</span></span><div><strong id="gimbal-a">—</strong><span class="unit">°</span></div></div><div class="angle-cell axis-b"><span class="angle-name">ROLL <span class="angle-hint">SDK</span></span><div><strong id="gimbal-b">—</strong><span class="unit">°</span></div></div><div class="angle-cell axis-c"><span class="angle-name">YAW <span class="angle-hint">SDK</span></span><div><strong id="gimbal-c">—</strong><span class="unit">°</span></div></div></div>
+        <div class="panel-foot"><span id="gimbal-source" class="source-text">04 → 2a · 04/05 · awaiting frames</span><button id="gimbal-zero" class="text-button" disabled>Zero this view <span aria-hidden="true">↗</span></button></div>
+      </article>
+    </section>
+
+    <div class="interpretation-note"><span class="note-icon" aria-hidden="true">!</span><p><strong>Bench-supported candidates, not calibrated axes.</strong> One bench cycle supports aircraft A = pitch, B = roll, C = yaw. Direction, angle accuracy, and reference frames are not certified. Gimbal SDK labels remain provisional. Zeroing only changes this browser’s display.</p><button id="reset-zero" class="text-button" disabled>Reset view zeros</button></div>
+
+    <section class="lower-grid">
+      <article class="trace-panel" aria-labelledby="trace-title">
+        <div class="panel-heading"><div><p class="eyebrow">CONTINUOUS OBSERVATION</p><h2 id="trace-title">Angle history</h2></div><div class="segmented" role="group" aria-label="Trace source"><button id="trace-aircraft" class="selected" aria-pressed="true">Aircraft</button><button id="trace-gimbal" aria-pressed="false">Gimbal</button></div></div>
+        <div class="trace-wrap"><canvas id="trace-canvas" role="img" aria-label="Recent angle histories; textual readings above show current values"></canvas><p id="trace-empty" class="trace-empty">Waiting for received angle samples</p></div>
+        <div class="trace-foot"><div class="trace-legend"><span class="legend-a">A / pitch*</span><span class="legend-b">B / roll*</span><span class="legend-c">C / yaw*</span></div><span id="trace-span">LAST 30 SECONDS · RECEIPT TIME</span></div>
+      </article>
+
+      <aside class="transport-panel" aria-labelledby="transport-title"><p class="eyebrow">OBSERVATION QUALITY</p><h2 id="transport-title">The receive path</h2><dl class="telemetry-facts"><div><dt>Interface / endpoint</dt><dd id="transport-endpoint">4 / 0x85 IN</dd></div><div><dt>Valid frames received</dt><dd id="transport-frames">0</dd></div><div><dt>Recent packet rate</dt><dd id="transport-rate">— <small>Hz</small></dd></div><div><dt>Latest sample age</dt><dd id="transport-age">—</dd></div><div><dt>Discarded stream bytes</dt><dd id="transport-discarded">0</dd></div><div><dt>Gimbal quaternion norm</dt><dd id="gimbal-norm">—</dd></div></dl><p class="transport-help">A checksum verifies packet integrity. It does not validate sensor calibration or flight readiness.</p><p id="transport-error" class="transport-error" hidden></p></aside>
+    </section>
+
+    <section class="bench-panel" aria-labelledby="bench-title">
+      <div class="bench-intro"><p class="eyebrow">MANUAL / MOTORS IDLE</p><h2 id="bench-title">Validate one axis<br>at a time.</h2><p>Move the whole aircraft by hand. Keep cable slack and never force the gimbal. The buttons below only annotate observations on this Mac.</p><span id="bench-session" class="session-label">NO BENCH SESSION YET</span></div>
+      <div class="bench-workflow"><div class="step-header"><span id="bench-step-number" class="step-number">01 / 07</span><span id="bench-gate" class="bench-gate">FRESH LIVE DATA REQUIRED</span></div><h3 id="bench-step-title">Stationary baseline</h3><p id="bench-step-detail">Place the aircraft level and hold it still for at least three seconds. Wait for both readings to settle, then record a baseline.</p><div id="bench-step-track" class="step-track" aria-label="Bench test progress"></div><div class="bench-actions"><button id="bench-record" class="primary-button" disabled>Record stationary baseline <span aria-hidden="true">+</span></button><button id="bench-restart" class="text-button">Restart guide</button></div><p id="bench-feedback" class="bench-feedback" role="status">This guide records comparisons; it does not automatically certify an axis.</p></div>
+      <div class="bench-log"><p class="eyebrow">LOCAL ANNOTATIONS</p><ol id="bench-markers" class="marker-list"><li class="empty-marker">No markers recorded.<br>Begin with a stationary baseline.</li></ol></div>
+    </section>
+
+    <section class="video-slot" aria-label="Future camera integration"><div class="video-symbol" aria-hidden="true"><span></span></div><div><p class="eyebrow">FUTURE INTEGRATION</p><h2>Camera feed, a separate instrument.</h2><p>Owned by the Neo 2 video viewer chat. No video transport is started here; an explicit preview interface can be added once the first frame is verified.</p></div><span class="reserved-badge">INPUT RESERVED</span></section>
+
+    <footer><span>NEO / OPEN RESEARCH</span><p>Receive-only instruments · physical axes unverified · no flight controls</p><span id="service-uptime">LOCAL SERVICE</span></footer>
+  </main>
+</body>
+</html>

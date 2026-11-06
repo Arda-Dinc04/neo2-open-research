@@ -1,0 +1,53 @@
+{
+  "accessed_date": "2026-11-06",
+  "sources": [
+    {
+      "topic": "host-identities",
+      "url": "https://github.com/o-gs/dji-firmware-tools/blob/master/comm_mkdupc.py",
+      "blob_sha": "c9b231356b1c3408a4087105f37524b6dde385b3",
+      "ref": "upstream default branch at access time"
+    },
+    {
+      "topic": "neo2-framing",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/duml.py",
+      "blob_sha": "feda277c2aa835a60fcfa25f279be0f5239316b9",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "usb-capture-source",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/tools/capture_usb_duml.py",
+      "blob_sha": "029c773f4b7d3366f62fb0d10b7d368bd0c48729",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "host-control",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/host_control.py",
+      "blob_sha": "82bcf351a95f5a9826e1e4c9277698b2e30128e8",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "neo2-gimbal",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/gimbal_telemetry.py",
+      "blob_sha": "fd12e130ea29e3e92f2cccb3856e598e68c27c9f",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "neo2-battery",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/battery.py",
+      "blob_sha": "a09e1212ac912f65827542977c72ad13a072bcda",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "session",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/session.py",
+      "blob_sha": "3e43b23299027da0cb819571f1e66840b6fd9157",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    },
+    {
+      "topic": "neo2-fc-osd",
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/telemetry.py",
+      "blob_sha": "2e3582d8c69a93b36a59062c988d27fb4ba14acb",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f"
+    }
+  ]
+}

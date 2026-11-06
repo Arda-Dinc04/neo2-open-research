@@ -1,0 +1,16 @@
+{
+  "sources": [
+    {
+      "url": "https://raw.githubusercontent.com/o-gs/dji-firmware-tools/master/comm_dissector/wireshark/dji-dumlv1-general.lua",
+      "git_blob_sha1": "434416a2fda5f8c5a6edf5bb434672ea0538adb7",
+      "accessed_date": "2026-11-06",
+      "interpretation_scope": "legacy label/layout only; not a Neo 2 handler"
+    },
+    {
+      "url": "https://raw.githubusercontent.com/o-gs/dji-firmware-tools/master/comm_dissector/wireshark/dji-dumlv1-flyc.lua",
+      "git_blob_sha1": "3f7853577bf18de15a7e15bbda6364a04af287e8",
+      "accessed_date": "2026-11-06",
+      "interpretation_scope": "legacy label/layout only; not a Neo 2 handler"
+    }
+  ]
+}

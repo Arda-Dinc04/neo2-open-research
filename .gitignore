@@ -1,0 +1,8 @@
+build/
+__pycache__/
+*.pyc
+private-capture*
+.DS_Store
+local-data/
+*.private.json
+*.private.jsonl

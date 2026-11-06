@@ -1,0 +1,120 @@
+# neo2-open-research
+
+Open receive-only USB tools and a live aircraft/gimbal orientation viewer for
+DJI Neo 2. The local Mac viewer receives real USB traffic and sends **zero DJI
+application-command bytes**. This is host-side research around stock hardware;
+no flight SDK or replacement firmware is claimed.
+
+## Run the viewer
+
+Requirements: Python 3.11+, an existing C compiler, and libusb development files.
+These were already installed on the tested Apple Silicon Mac. No driver, kernel
+extension, firmware update, or Python dependency installation is needed.
+
+```sh
+python3 tools/build_helper.py
+python3 run_viewer.py --mode live
+```
+
+Open **http://127.0.0.1:8765**. The server binds only to loopback. The aircraft
+must be powered on with a supported USB configuration. Remove the gimbal cover
+if fitted and keep motors idle. A powered-off USB device can enumerate without
+streaming orientation.
+
+If sandbox USB access fails, run the same command in a normal Mac Terminal.
+Do not use sudo or install drivers as a default response. If USB disconnects
+or the helper exits, retained values are marked stale/error; restart the viewer
+after reconnecting. Ctrl-C stops the server/helper and releases the interface.
+
+The native helper accepts only `--receive-only`, validates descriptors, and
+reads literal bulk **IN 0x85 on interface 4**. It temporarily claims an unbound
+interface. It has no bulk OUT, vendor-request, reset, driver-detach, configuration,
+flight, or firmware command path. Standard descriptor reads are used for
+identification. Reads consume endpoint data; this is not a bus sniffer.
+
+## Instruments and bench annotations
+
+One exploratory bench cycle supports aircraft A=pitch, B=roll, C=yaw, positive
+for nose-up, right-side-down and clockwise rotation from above. The viewer
+labels these as candidates; scale accuracy and repeatability remain unverified.
+See the [first bench findings](docs/first-bench-findings.md). Gimbal pitch/roll/yaw
+labels follow a source-reconstructed SDK order. Quaternion conventions, camera
+alignment and absolute heading remain unverified.
+Each channel has its own receipt age and stale indicator. Mac receipt time
+is not a verified sensor timestamp.
+
+**Zero this view** changes only that browser's display. It does not change
+raw readings, exported bench measurements, or the aircraft.
+
+Follow the built-in guide or [bench walkthrough](docs/bench-tests.md): a
+stationary baseline, manual clockwise 90-degree yaw, return, nose-up 15 degrees,
+return, right-side-down 15 degrees, and finish. Hold steady for at least three
+seconds before marking. Baselines should remain stationary for five seconds.
+Never force the gimbal. Markers require fresh live data from both channels;
+replay/demo cannot validate physical axes.
+
+Record buttons save local annotations only: recent sample medians, spread,
+angle deltas, source provenance and the operator's expected physical action.
+Each channel must contribute at least three samples spanning at least one
+second within the preceding two-second window. Large spread is recorded as
+unstable, not silently accepted as calibration.
+No axis is automatically certified. Export bench-session JSON from the page.
+By default local records live under `local-data/bench-sessions/`, excluded from
+Git and release archives. Do not commit raw captures or local session records.
+
+Analyze an exported session entirely offline:
+
+```sh
+python3 diagnostics/analyze_bench.py /path/to/bench-session.json --reference estimated
+```
+
+Use `--reference measured` only when an independent angle reference was used.
+The analysis recomputes circular differences from recorded absolute values;
+return-baseline markers reset their stored deltas and need this comparison.
+No analysis changes packet scaling or automatically certifies calibration.
+
+## Replay and demonstration
+
+These modes are visibly labeled and cannot record physical bench markers:
+
+```sh
+python3 run_viewer.py --mode replay --capture /path/to/private-capture.json --port 8766
+python3 run_viewer.py --mode demo --port 8766
+```
+
+Replay uses recorded transfer offsets or a described fallback pacing. Demo
+uses synthetic orientation and never opens USB. Neither is live validation.
+
+## Workstreams
+
+- [Main research goal](docs/research-goal.md): USB, routes, components, transceiver
+  mapping, protocol evidence and reproducible bench validation.
+- [Mac video-chat goal](docs/video-goal.md): upstream fork compatibility, first
+  actual frame, reliable preview and timestamped recording.
+- [Integration contract](docs/integration.md): independent transport owners,
+  attributed frames and ages; no false exposure-time synchronization.
+- [Component evidence](docs/components.md), [routing findings](docs/usb_routing.md),
+  [passive packet findings](docs/passive-packet-findings.md),
+  [hardware photo map](docs/hardware-photo-map.md), [roadmap](docs/roadmap.md),
+  and [viewer validation](docs/viewer-validation.md).
+
+The camera panel is a placeholder; this process opens no video transport.
+DEP1/O4 has not been assigned a separate USB interface or logical host. Receiving
+aircraft data through its connector does not establish a Mac O4-adapter API.
+No additional radio purchase is needed for current USB observation milestones.
+
+## Tests and publication
+
+```sh
+python3 -m unittest discover -s tests -v
+python3 tools/package_release.py
+```
+
+Tests cover framing, split/corrupt data, modes, stale states, source provenance,
+angle wrap and local HTTP annotations. HTTP tests bind an isolated loopback
+server with synthetic state; tests do not operate hardware. Source releases
+exclude session records, raw captures, native binaries and local identifiers.
+
+Original code/documentation is [MIT licensed](LICENSE). See
+[source notices](THIRD_PARTY_NOTICES.md) for upstream evidence and attribution.
+This repository is local and has not been published to GitHub.
