@@ -9,8 +9,14 @@ no flight SDK or replacement firmware is claimed.
 
 This is the main [Neo 2 open research repository](https://github.com/Arda-Dinc04/neo2-open-research).
 Source, synthetic tests, protocol evidence and reviewed bench findings are
-versioned here. The broader [research goal](docs/research-goal.md) remains active:
-understanding all components is ongoing work, with unknowns kept explicit.
+versioned here. The [research goal](docs/research-goal.md) tracks component
+understanding and reproducible observations, with unknowns kept explicit.
+
+The long-term [OpenNeo build brief](docs/compact-openneo-build-brief.md) defines
+an original, reproducible aircraft with a printable frame, documented purchased
+electronics, wiring and open software. The first prototype must be Neo-like
+in size. This is a separate design workstream; no validated BOM, printable
+airframe or equivalent DJI feature set is available yet.
 
 The separate [Mac camera research fork](https://github.com/Arda-Dinc04/dji-neo2-lan-client/tree/codex/macos-camera-preview)
 preserves its upstream history and owns BLE/Wi-Fi camera setup and playback.
@@ -143,6 +149,9 @@ uses synthetic orientation and never opens USB. Neither is live validation.
 
 ## Workstreams
 
+- [Compact OpenNeo aircraft](docs/compact-openneo-build-brief.md): original
+  mechanical/electrical design, component budgets and a reproducible build;
+  Neo-like size is required from the first prototype.
 - [Main research goal](docs/research-goal.md): USB, routes, components, transceiver
   mapping, protocol evidence and reproducible bench validation.
 - [Mac video-chat goal](docs/video-goal.md): upstream fork compatibility, first

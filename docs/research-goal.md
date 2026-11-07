@@ -13,6 +13,21 @@ that a logical host address identifies a physical chip, that an open host tool
 makes vendor firmware open source, or that receiving telemetry establishes a
 programmable flight interface.
 
+## Broader OpenNeo destination
+
+The user has clarified the long-term outcome: an original aircraft someone can
+build from a printed frame/shell, purchased electronics, documented wiring and
+open software, with **Neo-like size from the first prototype**. The
+[compact aircraft build brief](compact-openneo-build-brief.md) records that
+requirement, component candidates, evidence gaps and reproducible deliverables.
+This stock-aircraft research remains one supporting workstream. It is not a
+prerequisite to decode every DJI component before designing the original
+aircraft, and it is not a demonstrated replacement for DJI hardware/firmware.
+
+The build is presently at design planning. No validated parts list, working
+CAD airframe or equivalent camera, autonomy or radio performance is claimed.
+Existing receive-only USB and no-flight/no-firmware boundaries remain in effect.
+
 ## Near-term outcomes
 
 1. Deliver a working live receive-only aircraft/gimbal viewer with raw/source

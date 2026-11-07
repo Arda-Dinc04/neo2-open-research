@@ -1,6 +1,17 @@
-# Building an open Neo 2 research project
+# OpenNeo roadmap
 
-The practical goal is an open collection of protocols, original host tools,
+The long-term destination is an original, reproducible compact aircraft:
+printable frame/shell, specified electronics, wiring and open software, with
+**Neo-like size from the first prototype**. See the
+[compact build brief](compact-openneo-build-brief.md) for requirements,
+candidate controllers, mass/power/space budgets and deliverables. The next
+design milestone is a sourced compact parts/power-system comparison. No
+validated BOM or printable reference airframe exists yet. This design work
+does not require an O4 reimplementation or complete DJI protocol recovery.
+
+## Stock-aircraft research workstream
+
+This workstream produces an open collection of protocols, original host tools,
 component maps, reproducible observations, and eventually validated interfaces
 around the stock aircraft. Replacing the flight controller firmware, camera
 pipeline, and radio stack is a much larger, separate effort; none is currently

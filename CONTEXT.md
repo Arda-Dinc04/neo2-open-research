@@ -49,3 +49,11 @@ See docs/gnss-status-findings.md; no GNSS field was added to the live viewer.
 The future **video adapter** provides attributed image observations from the
 separate camera process. Its transport/session/recording lifecycle is not owned
 by the orientation viewer. No exposure-time pose alignment is established.
+
+**OpenNeo reference aircraft** means an original, reproducible aircraft design
+with printable mechanical parts, purchased electronics, documented wiring and
+open software. Its first prototype must be Neo-like in size. This long-term
+design workstream is distinct from stock Neo 2 reverse engineering; its BOM,
+fit, propulsion, camera and autonomy capabilities are not yet validated. See
+docs/compact-openneo-build-brief.md. It does not expand the current device-command
+authorization or make vendor firmware/PCB designs open source.
