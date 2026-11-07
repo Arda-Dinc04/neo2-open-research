@@ -14,7 +14,7 @@ open source. Start with the useful access already proven.
 | 1 | Open USB inventory, receive-only recorder, CRC decoder and routing census | Already working on this Mac; fixed capture format and tests | None |
 | 2 | Aircraft/gimbal orientation viewer, timestamped motion logger, stream-rate and dropout diagnostics | Live receive/decode/display verified; one exploratory bench cycle supports candidate axes; repeated measured angle tests pending | None |
 | 3 | Component capability map and reliable read-only device/battery/status API | Capture/source-backed target and session rules; no invented values or command sweeps | None initially |
-| 4 | Photo/media integration and live camera research | Mounted-media reads verified; BLE/Wi-Fi client provides source leads for video; review setup messages separately | Existing phone/Mac may suffice; macOS adaptation unverified |
+| 4 | Photo/media integration and live camera research | Separate Mac fork demonstrated real WebRTC preview at 1280 × 720 and about 30 fps, plus an earlier operator-ended 7:59 preview; reviewed camera-only setup remains separate from USB observation | Existing Mac/aircraft worked; USB host disconnected; no total-delay or O4 ground-link claim |
 | 5 | Obstacle/vision observations, radio diagnostics, additional sensors | Discover actual message layouts/endpoints first; hardware labels alone are insufficient | Defer purchases until a specific gap is known |
 | Later | A bounded, validated control API | Separate authorization, simulation, explicit limits and demonstrated fail-safe behavior | Not in the current read-only scope |
 
@@ -67,10 +67,12 @@ component-specific known-good trace is needed to make that assignment.
 - Start a focused `neo2-open-research` repository: original receive-only code,
   protocol notes, supported-model/state matrix, synthetic tests, source links,
   and explicit verified/reported/unknown labels.
-- The canonical source repository is prepared with an MIT license for the
+- The canonical source repository is [published on GitHub](https://github.com/Arda-Dinc04/neo2-open-research) with an MIT license for the
   original included tools. It intentionally contains no raw user captures,
   local device IDs, network inventory, firmware binaries, or active query tool.
-  It has not been published to any account.
+- The separate [Mac camera fork](https://github.com/Arda-Dinc04/dji-neo2-lan-client/tree/codex/macos-camera-preview)
+  preserves upstream attribution and history. Link the two workstreams through
+  observations rather than sharing USB handles or camera-session ownership.
 - Keep the full working capture bundle private. Its registry/product strings
   include per-device identifiers, and its raw frames may contain location data.
   Do not upload that ZIP as the public project. Export a reviewed aggregate

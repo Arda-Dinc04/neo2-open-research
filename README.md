@@ -5,6 +5,32 @@ DJI Neo 2. The local Mac viewer receives real USB traffic and sends **zero DJI
 application-command bytes**. This is host-side research around stock hardware;
 no flight SDK or replacement firmware is claimed.
 
+## Project and saved work
+
+This is the main [Neo 2 open research repository](https://github.com/Arda-Dinc04/neo2-open-research).
+Source, synthetic tests, protocol evidence and reviewed bench findings are
+versioned here. The broader [research goal](docs/research-goal.md) remains active:
+understanding all components is ongoing work, with unknowns kept explicit.
+
+The separate [Mac camera research fork](https://github.com/Arda-Dinc04/dji-neo2-lan-client/tree/codex/macos-camera-preview)
+preserves its upstream history and owns BLE/Wi-Fi camera setup and playback.
+It demonstrated real aircraft WebRTC video at 1280 × 720 and about 30 fps, with
+an English viewer, JPEG fallback and read-only playback diagnostics. Camera
+setup performs separately authorized registration/service-selection writes;
+it is not receive-only USB observation. Keep the aircraft USB host connection
+disconnected for that preview; concurrent USB telemetry and video is unverified.
+
+| Area | Current evidence |
+| --- | --- |
+| USB inventory and orientation viewer | Live receive/decode/display verified; repeated measured axis tests remain pending. |
+| Component and protocol map | Observed routes and source-backed fields documented; physical ownership and several message layouts remain unknown. |
+| Mac camera | Actual WebRTC frames verified in the separate fork; total camera delay and real radio reconnect recovery remain unmeasured. |
+| DEP1/O4 ground link | Aircraft-side module identified; a usable Mac ground-side bridge is not established. |
+
+Private captures, credentials, device identifiers and user camera media remain
+outside the public repositories. [Contribution guidance](CONTRIBUTING.md)
+describes useful evidence and how to reproduce the software checks.
+
 ## Run the viewer
 
 Requirements: Python 3.11+, an existing C compiler, and libusb development files.
@@ -124,7 +150,8 @@ uses synthetic orientation and never opens USB. Neither is live validation.
   [hardware photo map](docs/hardware-photo-map.md), [roadmap](docs/roadmap.md),
   and [viewer validation](docs/viewer-validation.md).
 
-The camera panel is a placeholder; this process opens no video transport.
+The orientation page's camera panel is a placeholder; this process opens no
+video transport. Actual Mac camera playback lives in the separate fork above.
 DEP1/O4 has not been assigned a separate USB interface or logical host. Receiving
 aircraft data through its connector does not establish a Mac O4-adapter API.
 No additional radio purchase is needed for current USB observation milestones.
@@ -143,4 +170,3 @@ exclude session records, raw captures, native binaries and local identifiers.
 
 Original code/documentation is [MIT licensed](LICENSE). See
 [source notices](THIRD_PARTY_NOTICES.md) for upstream evidence and attribution.
-This repository is local and has not been published to GitHub.

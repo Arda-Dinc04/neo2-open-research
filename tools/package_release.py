@@ -6,7 +6,7 @@ import zipfile
 
 ROOT = Path(__file__).resolve().parents[1]
 DIRECTORIES = ('src', 'native', 'viewer', 'diagnostics', 'tests', 'docs', 'tools')
-ROOT_FILES = ('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', '.gitignore', 'run_viewer.py', 'AGENTS.md', 'CONTEXT.md')
+ROOT_FILES = ('README.md', 'LICENSE', 'THIRD_PARTY_NOTICES.md', 'CONTRIBUTING.md', '.gitignore', 'run_viewer.py', 'AGENTS.md', 'CONTEXT.md')
 
 
 def main():
