@@ -20,6 +20,7 @@ comparison remains necessary to investigate ownership. See
 | Main-board storage package | Manufacturer-filed aircraft photo page 7 visibly marks a package BIWIN / 3D NAND | Photo-supported brand/type marking only | Exact part number/capacity, bus and firmware/media ownership; this operator's board has not been inspected |
 | Air-side processor logical role | Address `48` (legacy type `8`, instance `2`) emitted `WA020` in `00/82` | Raw route/module-string observation | Physical chip, board, processor ownership, and meaning of the string |
 | Vision-related logical role | Address `92` (legacy type `18`, instance `4`) emitted constant 28-byte `03/ce` payloads in two idle windows | Structural profile and route census | Legacy command label is forbid-data information; Neo 2 payload meaning and physical sensors remain unknown; no range or LiDAR access established |
+| Source-92 Wi-Fi traffic | Four saved camera windows contain constant `03/ce` (28 bytes) and `24/71` (7 bytes) sent to `02` and `1c`, with equal content sets | Bounded [value-free structural profiles](vision-route-structure.md); no distance or health decoding | Model-specific seven-byte handler and independent physical reference; `24/08` birdview layout does not apply |
 | Physical vision / proximity sensors | DJI declares omnidirectional monocular vision, downward infrared and forward LiDAR; public internal photos show optical subassemblies | Manufacturer specifications and physical photo inventory only | Sensor silicon, internal buses, source-backed measurement messages and independent units/range checks |
 | Gimbal-origin component-state candidate | `04 → 2a` and `04 → 8a`, eight-byte `00/f1` payloads; equal payload sets in each idle window | Logical fan-out observation; legacy component-state label | Eight-byte layout, health semantics and receiver ownership; legacy sender-09 radio bit labels do not apply directly |
 | Battery | No `03/55` packet in 2,065 inspected receive frames; legacy OSD byte-40 percentage mapping contradicted by 143/243 values above 100 | No validated battery API; rejected-layout evidence recorded | Actual USB packet route/layout and comparison against an independent indication |
@@ -67,6 +68,7 @@ being replaced with zero.
 - [macOS driver-binding observations](macos-driver-bindings.md).
 - [Status candidates and rejected battery mapping](status-battery-findings.md).
 - [Wi-Fi camera-session route comparison](wifi-route-findings.md) and [reviewed aggregate counts](wifi-route-summary.json).
+- [Source-92 structural findings](vision-route-structure.md) and [value-free summary](vision-structure-summary.json).
 - [Live header census and observed unchanged-setup window](live-route-census.md).
 - [Pinned upstream USB census](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/tools/capture_usb_duml.py).
 - [Pinned gimbal decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/gimbal_telemetry.py) and [FC decoder](https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/telemetry.py).

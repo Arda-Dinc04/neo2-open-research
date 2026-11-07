@@ -17,6 +17,9 @@ MAX_FILE_BYTES = 1024 * 1024 * 1024
 MAX_LINE_BYTES = 65536
 MAX_RECORDS = 1000000
 MAX_ROUTES = 4096
+MAX_PROFILE_ROUTES = 64
+MAX_PROFILE_POSITIONS = 32768
+MAX_DISTINCT_PAYLOADS = 128
 
 
 def complete_frames(data):
@@ -93,9 +96,13 @@ def forwarded_frame(outer):
     return frames[0]
 
 
-def audit_capture(path):
+def audit_capture(path, *, profile_host=None):
     """Return counts and a private reproducibility digest, never payloads or IDs."""
+    if profile_host is not None and (type(profile_host) is not int or not 0 <= profile_host <= 255):
+        raise ValueError('profile_host_must_be_logical_byte')
     counters, routes = Counter(), Counter()
+    profiles = {}
+    positions = 0
     digest = hashlib.sha256()
     total = 0
     fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC)
@@ -145,15 +152,59 @@ def audit_capture(path):
                     routes[key] += 1
                     if len(routes) > MAX_ROUTES:
                         raise ValueError('capture_route_limit_exceeded')
+                    if packet.sender != profile_host or packet.raw[8] & 7:
+                        continue
+                    if key not in profiles:
+                        positions += len(packet.payload)
+                        if len(profiles) >= MAX_PROFILE_ROUTES or positions > MAX_PROFILE_POSITIONS:
+                            raise ValueError('capture_profile_limit_exceeded')
+                        profiles[key] = {'bytes': [0] * len(packet.payload), 'digests': set(), 'capped': False}
+                    profile = profiles[key]
+                    for offset, value in enumerate(packet.payload):
+                        profile['bytes'][offset] |= 1 << value
+                    payload_digest = hashlib.sha256(packet.payload).digest()
+                    if payload_digest not in profile['digests']:
+                        if len(profile['digests']) < MAX_DISTINCT_PAYLOADS:
+                            profile['digests'].add(payload_digest)
+                        else:
+                            profile['capped'] = True
         after = os.fstat(source.fileno())
     fields = ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns')
     if any(getattr(before, key) != getattr(after, key) for key in fields):
         raise ValueError('capture_changed_during_audit')
+    def route(key, count):
+        return {'layer': key[0], 'sender': f'{key[1]:02x}', 'receiver': f'{key[2]:02x}',
+                'command': f'{key[3]:02x}/{key[4]:02x}', 'flags': f'{key[5]:02x}',
+                'payload_length': key[6], 'occurrences': count}
+    variations = []
+    for key, profile in sorted(profiles.items()):
+        cardinalities = [value.bit_count() for value in profile['bytes']]
+        variations.append({**route(key, routes[key]),
+            'distinct_payload_count': None if profile['capped'] else len(profile['digests']),
+            'distinct_payload_count_lower_bound': len(profile['digests']) + int(profile['capped']),
+            'distinct_count_capped': profile['capped'],
+            'changed_byte_offsets': [i for i, count in enumerate(cardinalities) if count > 1],
+            'byte_cardinalities': cardinalities, 'variation_assessable': routes[key] >= 2})
+    fanout = []
+    keys = sorted(profiles)
+    for index, left in enumerate(keys):
+        for right in keys[index + 1:]:
+            if left[2] == right[2] or left[:2] + left[3:] != right[:2] + right[3:]:
+                continue
+            a, b = profiles[left], profiles[right]
+            if not a['capped'] and not b['capped'] and a['digests'] == b['digests']:
+                fanout.append({'layer': left[0], 'sender': f'{left[1]:02x}',
+                    'receivers': [f'{left[2]:02x}', f'{right[2]:02x}'],
+                    'command': f'{left[3]:02x}/{left[4]:02x}', 'flags': f'{left[5]:02x}',
+                    'payload_length': left[6], 'observed_payload_sets_equal': True,
+                    'packet_timing_or_delivery_pairing_verified': False})
     return {'schema': 'neo2.wifi-route-audit.v1', 'mode': 'offline_saved_capture',
             'transport_profile': 'neo2_swudp_ack_mode_1_complete_frames',
             'source_sha256': digest.hexdigest(), 'counts': dict(counters),
             'scope': 'complete CRC-valid frame occurrences; no stream reassembly, FEC recovery, deduplication or physical ownership inference',
-            'routes': [{'layer': k[0], 'sender': f'{k[1]:02x}', 'receiver': f'{k[2]:02x}',
-                        'command': f'{k[3]:02x}/{k[4]:02x}', 'flags': f'{k[5]:02x}',
-                        'payload_length': k[6], 'occurrences': count}
-                       for k, count in sorted(routes.items())]}
+            'routes': [route(key, count) for key, count in sorted(routes.items())],
+            'payload_variation': {'profile_host': None if profile_host is None else f'{profile_host:02x}',
+                'payload_values_exported': False, 'maximum_profiles': MAX_PROFILE_ROUTES,
+                'maximum_profiled_byte_positions': MAX_PROFILE_POSITIONS,
+                'maximum_distinct_payloads_per_profile': MAX_DISTINCT_PAYLOADS,
+                'profiles': variations, 'payload_set_fanout': fanout}}

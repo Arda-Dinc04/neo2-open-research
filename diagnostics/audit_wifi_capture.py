@@ -14,9 +14,11 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('capture', type=Path)
     parser.add_argument('--output', type=Path, required=True)
+    parser.add_argument('--profile-host', type=lambda value: int(value, 16),
+                        help='Logical source byte in hex; add bounded, value-free payload variation summaries')
     args = parser.parse_args()
     try:
-        report = audit_capture(args.capture)
+        report = audit_capture(args.capture, profile_host=args.profile_host)
         fd = os.open(args.output, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
         with os.fdopen(fd, 'w') as output:
             json.dump(report, output, indent=2, allow_nan=False)

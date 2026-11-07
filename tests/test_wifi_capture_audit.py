@@ -5,6 +5,7 @@ from pathlib import Path
 import sys
 import tempfile
 import unittest
+from unittest.mock import patch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
 from transport.duml_observer import crc8, crc16
@@ -37,11 +38,11 @@ def row(raw, **extra):
 
 
 class WifiCaptureAuditTests(unittest.TestCase):
-    def audit(self, rows):
+    def audit(self, rows, **options):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / 'synthetic.jsonl'
             path.write_text(''.join(json.dumps(r) + '\n' for r in rows))
-            return audit_capture(path)
+            return audit_capture(path, **options)
 
     def test_native_forwarding_and_direct_routes_remain_distinct(self):
         inner = frame()
@@ -139,6 +140,50 @@ class WifiCaptureAuditTests(unittest.TestCase):
             os.mkfifo(fifo)
             with self.assertRaises(ValueError):
                 audit_capture(fifo)
+
+    def test_structural_profile_tracks_changes_without_exporting_values(self):
+        result = self.audit([row(datagram(frame(b'private-a', sender=0x92))),
+                             row(datagram(frame(b'private-b', sender=0x92))),
+                             row(datagram(frame(b'other-source', sender=3)))], profile_host=0x92)
+        variation = result['payload_variation']
+        self.assertFalse(variation['payload_values_exported'])
+        self.assertEqual(len(variation['profiles']), 1)
+        profile = variation['profiles'][0]
+        self.assertEqual(profile['distinct_payload_count'], 2)
+        self.assertEqual(profile['changed_byte_offsets'], [8])
+        self.assertEqual(profile['byte_cardinalities'], [1] * 8 + [2])
+        self.assertNotIn('private-a', json.dumps(result))
+        self.assertNotIn('707269766174652d61', json.dumps(result))
+
+    def test_fanout_requires_equal_complete_sets_and_matching_layer_flags_layout(self):
+        rows = [row(datagram(frame(b'unchanged', sender=0x92, receiver=r))) for r in [2, 0x1c]]
+        result = self.audit(rows, profile_host=0x92)['payload_variation']
+        self.assertEqual(len(result['payload_set_fanout']), 1)
+        self.assertFalse(result['payload_set_fanout'][0]['packet_timing_or_delivery_pairing_verified'])
+        rows.append(row(datagram(frame(b'different', sender=0x92, receiver=2))))
+        self.assertEqual(self.audit(rows, profile_host=0x92)['payload_variation']['payload_set_fanout'], [])
+        encrypted = self.audit([row(datagram(frame(b'cipher', sender=0x92, flags=1)))], profile_host=0x92)
+        self.assertEqual(encrypted['payload_variation']['profiles'], [])
+
+    def test_capped_distinct_counts_are_explicit_and_cannot_establish_fanout(self):
+        rows = [row(datagram(frame(bytes([v]), sender=0x92, receiver=r))) for r in [2, 0x1c] for v in range(4)]
+        with patch('transport.wifi_capture_audit.MAX_DISTINCT_PAYLOADS', 2):
+            variation = self.audit(rows, profile_host=0x92)['payload_variation']
+        for profile in variation['profiles']:
+            self.assertIsNone(profile['distinct_payload_count'])
+            self.assertEqual(profile['distinct_payload_count_lower_bound'], 3)
+            self.assertTrue(profile['distinct_count_capped'])
+            self.assertEqual(profile['byte_cardinalities'], [4])
+        self.assertEqual(variation['payload_set_fanout'], [])
+
+    def test_profile_limits_fail_instead_of_accumulating_unbounded_state(self):
+        rows = [row(datagram(frame(sender=0x92, receiver=r))) for r in [2, 0x1c]]
+        with patch('transport.wifi_capture_audit.MAX_PROFILE_ROUTES', 1):
+            with self.assertRaisesRegex(ValueError, 'profile_limit'):
+                self.audit(rows, profile_host=0x92)
+        for invalid in [True, -1, 256, '92']:
+            with self.assertRaisesRegex(ValueError, 'logical_byte'):
+                self.audit([], profile_host=invalid)
 
 
 if __name__ == '__main__':

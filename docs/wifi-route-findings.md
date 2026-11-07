@@ -30,6 +30,9 @@ but this audit publishes header counts, not a calibrated battery API. Its
 availability over Wi-Fi does not establish a USB subscription or query path.
 The vision-related label for `92` comes from a legacy host enum; it still does
 not assign a particular camera, LiDAR, sensor chip or DEP1 ownership.
+Further [structural inspection](vision-route-structure.md) found constant
+payloads and equal content sets at the two recipients; it did not establish a
+sensor layout or physical units.
 
 ## Four independent saved windows
 
