@@ -7,6 +7,11 @@ copies of the reviewed upstream GPL source files.
 - `o-gs/dji-firmware-tools` (GPL): reference for DUML bit packing, legacy command
   names and USB selection conventions. Those labels do not prove Neo 2 support.
   https://github.com/o-gs/dji-firmware-tools
+- `linnin233/dji-neo2-tools` (GPLv3): additional source evidence for USB selection,
+  request framing and pre-read actions. Reviewed at
+  `f0b715ad5f064c25439e389cb892befa7c2e3cff`; source was not run, imported or
+  incorporated. See `docs/external-usb-source-review.md` for narrow findings.
+  https://github.com/linnin233/dji-neo2-tools
 - `smichea/dji-neo2-lan-client` (MIT): source evidence for the receive-only USB
   idle baseline, provisional gimbal/FC/battery field layouts, SWUDP envelope
   and WLM forwarding wire structure. The offline Wi-Fi census is an original

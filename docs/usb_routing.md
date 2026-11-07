@@ -1,4 +1,4 @@
-# USB routing/session investigation — 6 November 2026
+# USB routing/session investigation — reviewed 6–7 November 2026
 
 ## Outcome
 
@@ -66,6 +66,13 @@ All observed RX packets have encryption bits zero. No response-bit packets,
 Wi-Fi registration messages occur in these captures. This describes the
 saved windows only; startup, other routes, and other sessions were not captured.
 
+An additional [Neo 2 USB host-source review](external-usb-source-review.md)
+corroborated interface 4 using the saved configuration string. A subclass-only
+fallback is nonunique across interfaces 3–7. The source's parameter-get paths
+also call Assistant Unlock; they are not a receive-only procedure for this
+project. This new evidence does not establish `00/ff` support or a required
+identity-query handshake. No new device request or configuration operation ran.
+
 ## Capture and query limitations
 
 - The initial query response read reached its approximately 64 KiB budget
@@ -103,7 +110,7 @@ determine target host, source instance, transport envelope, and any registration
 requirements from that evidence. Meanwhile, receive-only sensor visualization
 and controlled bench calibration can progress without the identity query.
 
-Artifacts: `diagnostics/captures/routing-audit.json`,
-`diagnostics/captures/component-observations.json`,
-`research/routing-source-provenance.json`. Reproduce with `audit_routes.py`
-and `inspect_components.py`; both operate on saved files and have no device I/O.
+Historical audit and component-observation records remain private. Public
+[source provenance](routing-source-provenance.json) is retained here. Reproduce
+with `diagnostics/audit_routes.py` and `diagnostics/inspect_components.py` using
+your saved captures; both operate on files and have no device I/O.
