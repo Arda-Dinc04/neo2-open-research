@@ -13,6 +13,7 @@ import secrets
 import stat
 import threading
 import time
+from urllib.error import HTTPError
 from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 STEPS = (
@@ -52,8 +53,15 @@ class CameraReader:
 
     def get(self, path, limit=262144):
         headers = {'X-Neo2-Token': self.token} if self.token else {}
-        with self.opener.open(Request(self.base + path, headers=headers, method='GET'), timeout=2) as r:
-            body = r.read(limit + 1)
+        try:
+            with self.opener.open(Request(self.base + path, headers=headers, method='GET'), timeout=2) as r:
+                body = r.read(limit + 1)
+        except HTTPError as error:
+            if error.code != 401:
+                raise
+            self.token = None
+            error.close()
+            raise ValueError('local_camera_token_expired') from None
         if len(body) > limit:
             raise ValueError('local_response_too_large')
         return body

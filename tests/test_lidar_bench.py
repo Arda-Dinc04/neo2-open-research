@@ -6,6 +6,7 @@ from pathlib import Path
 import tempfile
 import time
 import unittest
+from urllib.error import HTTPError
 
 SPEC = importlib.util.spec_from_file_location('lidar_bench', Path(__file__).resolve().parents[1] / 'diagnostics/lidar_bench.py')
 bench_module = importlib.util.module_from_spec(SPEC)
@@ -133,6 +134,32 @@ class LidarBenchTests(unittest.TestCase):
     def test_old_rx_timestamp_cannot_pass_on_new_file_mtime(self):
         with self.assertRaisesRegex(ValueError, 'receive'):
             self.camera_reader(age=10).sample()
+
+    def test_restarted_camera_owner_expires_cached_token_without_sending_a_post(self):
+        reader = bench_module.CameraReader(Path(self.temp.name))
+        reader.token = 'c' * 64
+        class Unauthorized:
+            def open(self, request, **kwargs):
+                self.request = request
+                raise HTTPError(request.full_url, 401, 'Unauthorized', {}, None)
+        opener = Unauthorized()
+        reader.opener = opener
+        with self.assertRaisesRegex(ValueError, 'token_expired'):
+            reader.get('/api/camera/status')
+        self.assertIsNone(reader.token)
+        self.assertEqual(opener.request.get_method(), 'GET')
+
+    def test_non_auth_http_error_does_not_discard_owner_token(self):
+        reader = bench_module.CameraReader(Path(self.temp.name))
+        reader.token = 'c' * 64
+        class Missing:
+            def open(self, request, **kwargs):
+                raise HTTPError(request.full_url, 404, 'Not found', {}, None)
+        reader.opener = Missing()
+        with self.assertRaises(HTTPError) as caught:
+            reader.get('/api/camera/status')
+        caught.exception.close()
+        self.assertEqual(reader.token, 'c' * 64)
 
 
 if __name__ == '__main__':

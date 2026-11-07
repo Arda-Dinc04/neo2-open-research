@@ -45,6 +45,10 @@ seconds old. Outgoing traffic or a recent file modification alone cannot pass.
 A camera owner still in its `connecting` phase can produce valid received
 traffic, so its application-ready flag and decoded video are not prerequisites.
 Stopped/failed owners, changed generations and stale RX data remain rejected.
+If the camera server restarts, the guide discards an expired local access
+token and reacquires it on the next poll. Reload the camera page before using
+its Connect button. A changed aircraft-session generation still requires a
+new target test once any holds have been started.
 
 ## Physical setup and sequence
 
