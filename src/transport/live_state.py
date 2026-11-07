@@ -72,7 +72,8 @@ class LiveState:
     def _source(frame):
         return {'sender': f'{frame.sender:02x}', 'receiver': f'{frame.receiver:02x}',
                 'command': f'{frame.command[0]:02x}/{frame.command[1]:02x}',
-                'sequence': frame.sequence}
+                'sequence': frame.sequence, 'flags_hex': f'{frame.raw[8]:02x}',
+                'payload_length': len(frame.payload)}
 
     def ingest(self, data, timestamp=None):
         if not isinstance(data, (bytes, bytearray)):
@@ -123,11 +124,13 @@ class LiveState:
                             'raw': fields['attitude_tenths_raw'],
                             'source': self._source(frame),
                             'received_at': received_at,
+                            'observer_session_id': self._observer_session,
                             'axes_verified': False,
                         }
                         self._history.append({'timestamp': received_at,
                                               'kind': 'aircraft',
                                               'angles_deg': list(self._aircraft['angles_deg']),
+                                              'observer_session_id': self._observer_session,
                                               'source': self._source(frame)})
                         updated = True
                     elif gimbal:
@@ -139,11 +142,17 @@ class LiveState:
                             'quaternion_norm': fields['quaternion_norm'],
                             'source': self._source(frame),
                             'received_at': received_at,
+                            'observer_session_id': self._observer_session,
                             'axes_verified': False,
                         }
                         self._history.append({'timestamp': received_at,
                                               'kind': 'gimbal',
                                               'angles_deg': list(self._gimbal['angles_deg']),
+                                              'raw': list(self._gimbal['raw']),
+                                              'quaternion': list(self._gimbal['quaternion']),
+                                              'field_bytes': {'angles_le_hex': frame.payload[:6].hex(),
+                                                              'quaternion_le_hex': frame.payload[24:40].hex()},
+                                              'observer_session_id': self._observer_session,
                                               'source': self._source(frame)})
                         updated = True
                 except ValueError:

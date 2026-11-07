@@ -111,13 +111,17 @@ Each channel must contribute at least three samples spanning at least one
 second within the preceding two-second window. Large spread is recorded as
 unstable, not silently accepted as calibration.
 No axis is automatically certified. Export bench-session JSON from the page.
+New records also retain up to 128 [same-packet gimbal Euler/quaternion pairs](docs/gimbal-paired-evidence.md)
+per marker, with selected original field bytes, source metadata and receipt
+offsets. Polling carries counts only; full exports and local files contain the
+samples. These are raw evidence, not a verified quaternion convention.
 By default local records live under `local-data/bench-sessions/`, excluded from
 Git and release archives. Do not commit raw captures or local session records.
 
 Analyze an exported session entirely offline:
 
 ```sh
-python3 diagnostics/analyze_bench.py /path/to/bench-session.json --reference estimated
+python3 diagnostics/analyze_bench.py /path/to/bench-session.json --reference estimated --output /path/to/new-private-analysis.json
 ```
 
 Use `--reference measured` only when an independent angle reference was used.

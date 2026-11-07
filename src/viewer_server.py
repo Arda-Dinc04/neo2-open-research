@@ -1,14 +1,18 @@
 """Loopback-only viewer and local bench annotations; no drone-command API."""
 import datetime as dt
+import copy
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import math
+import os
 from pathlib import Path
 import secrets
 import statistics
 import threading
 import time
 from urllib.parse import urlsplit
+
+from transport.bench_evidence import finite_vector, gimbal_pair_evidence, route_key
 
 
 def wrap_angle(value):
@@ -33,23 +37,37 @@ class BenchRecorder:
         with self.lock:
             return {'session_id': self.session_id,
                     'stage': self.markers[-1]['label'] if self.markers else 'idle',
-                    'markers': list(self.markers), 'physical_axes_verified': False}
+                    'markers': [self._summary(marker) for marker in self.markers], 'physical_axes_verified': False}
+
+    @staticmethod
+    def _summary(marker):
+        # Polling and annotation responses carry counts, not bulk evidence.
+        result = dict(marker)
+        sample = dict(result['gimbal_sample'])
+        if 'paired_evidence' in sample:
+            sample['paired_evidence'] = {key: value for key, value in sample['paired_evidence'].items() if key != 'samples'}
+        result['gimbal_sample'] = sample
+        return copy.deepcopy(result)
 
     def _recent_sample(self, snapshot, kind, now):
         value = snapshot.get(kind)
-        if not value or value.get('age_ms') is None or value['age_ms'] > 500:
+        if (not value or type(value.get('age_ms')) not in (int, float)
+                or not math.isfinite(value['age_ms']) or not 0 <= value['age_ms'] <= 500):
             raise ValueError('Both aircraft and gimbal readings must be fresh before recording a marker')
         angles = value.get('angles_deg')
-        if not isinstance(angles, list) or len(angles) != 3 or not all(
-                type(v) in (int, float) and math.isfinite(v) for v in angles):
+        if not finite_vector(angles, 3):
             raise ValueError('No valid angle sample available')
         try:
             history = self.state.history_snapshot(since=now - 2.0)
         except (AttributeError, TypeError):
             history = []
+        anchor = route_key(value.get('source'))
+        observer = value.get('observer_session_id')
         recent = [h for h in history if h.get('kind') == kind
-                   and h.get('timestamp', -1) <= now
-                   and isinstance(h.get('angles_deg'), list) and len(h['angles_deg']) == 3]
+                   and type(h.get('timestamp')) in (int, float) and math.isfinite(h['timestamp'])
+                   and now - 2.0 <= h['timestamp'] <= now and finite_vector(h.get('angles_deg'), 3)
+                   and (anchor is None or route_key(h.get('source')) == anchor)
+                   and (observer is None or h.get('observer_session_id') == observer)]
         samples = [h['angles_deg'] for h in recent]
         span = max((h['timestamp'] for h in recent), default=now) - min((h['timestamp'] for h in recent), default=now)
         if len(samples) < 3 or span < 1.0:
@@ -59,10 +77,13 @@ class BenchRecorder:
         columns = [[a + wrap_angle(v[i] - a) for v in samples] for i, a in enumerate(angles)]
         median = [wrap_angle(statistics.median(col)) for col in columns]
         spread = [round(max(col) - min(col), 4) for col in columns]
-        return {'angles': [round(a, 4) for a in median], 'sample_count': len(samples),
+        result = {'angles': [round(a, 4) for a in median], 'sample_count': len(samples),
                 'spread_deg': spread, 'source': value.get('source'), 'age_ms': value['age_ms'],
                 'sampling_window_s': 2.0, 'observed_span_s': round(span, 3),
                 'stable_within_2_deg': max(spread) <= 2.0}
+        if kind == 'gimbal':
+            result['paired_evidence'] = gimbal_pair_evidence(recent, value.get('source'), observer, now)
+        return result
 
     def add(self, data):
         if not isinstance(data, dict) or set(data) - {'label', 'expected_axis', 'expected_degrees'}:
@@ -100,25 +121,34 @@ class BenchRecorder:
             self.markers.append(marker)
             try:
                 self._save()
-            except OSError:
+            except (OSError, ValueError, TypeError):
                 self.markers.pop()
                 self.baseline = previous_baseline
                 raise
-            return marker
+            return self._summary(marker)
 
     def export(self):
-        return {'format': 'neo2-open-research/bench/v1', **self.snapshot(),
+        with self.lock:
+            result = self.snapshot()
+            result['markers'] = copy.deepcopy(self.markers)
+        return {'format': 'neo2-open-research/bench/v1', **result,
                 'interpretation': 'Operator annotations and source-backed fields; no automatic physical calibration',
                 'sensor_clock_verified': False, 'drone_commands_sent_by_viewer': 0}
 
     def _save(self):
         if not self.destination:
             return
-        self.destination.mkdir(parents=True, exist_ok=True)
+        self.destination.mkdir(mode=0o700, parents=True, exist_ok=True)
         path = self.destination / (self.session_id + '.json')
-        temp = path.with_suffix('.tmp')
-        temp.write_text(json.dumps(self.export(), indent=2, allow_nan=False) + '\n')
-        temp.replace(path)
+        body = json.dumps(self.export(), indent=2, allow_nan=False) + '\n'
+        temp = path.with_suffix('.' + secrets.token_hex(4) + '.tmp')
+        fd = os.open(temp, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+        try:
+            with os.fdopen(fd, 'w') as output:
+                output.write(body)
+            temp.replace(path)
+        finally:
+            temp.unlink(missing_ok=True)
 
 
 class ViewerApplication:

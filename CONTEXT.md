@@ -19,6 +19,12 @@ The **gimbal channel** decodes source 04, command 04/05, using a recognized
 inspected; physical conventions, stabilization frame and camera alignment
 remain separate questions.
 
+New private bench exports retain bounded Euler/quaternion pairs and selected
+field bytes from the same accepted gimbal packet. They preserve the SDK field
+order and PC receipt offsets without normalizing, averaging or establishing a
+physical quaternion convention. Polling exposes counts; full exports retain
+the samples. See docs/gimbal-paired-evidence.md.
+
 **Receipt time** is PC monotonic time at ingestion. It is not a sensor timestamp
 or camera exposure time. Each channel independently ages stale.
 

@@ -1,5 +1,33 @@
 """Analyze saved operator annotations without hardware I/O or calibration writes."""
-import math
+import json
+import os
+import stat
+
+from .bench_evidence import finite_vector, summarize_exported_gimbal_pairs
+
+MAX_BENCH_FILE_BYTES = 64 * 1024 * 1024
+
+
+def read_bench_session(path, *, maximum_bytes=MAX_BENCH_FILE_BYTES):
+    """Read one immutable, bounded regular export; never follow a FIFO/symlink."""
+    if type(maximum_bytes) is not int or not 1 <= maximum_bytes <= MAX_BENCH_FILE_BYTES:
+        raise ValueError('Invalid bench input bound')
+    fd = os.open(path, os.O_RDONLY | os.O_NONBLOCK | os.O_NOFOLLOW | os.O_CLOEXEC)
+    with os.fdopen(fd, 'rb') as source:
+        before = os.fstat(source.fileno())
+        if not stat.S_ISREG(before.st_mode) or before.st_size > maximum_bytes:
+            raise ValueError('Bench input must be a regular file within the size bound')
+        body = source.read(maximum_bytes + 1)
+        after = os.fstat(source.fileno())
+    if len(body) > maximum_bytes:
+        raise ValueError('Bench input exceeds the size bound')
+    if any(getattr(before, field) != getattr(after, field)
+           for field in ('st_dev', 'st_ino', 'st_size', 'st_mtime_ns', 'st_ctime_ns')):
+        raise ValueError('Bench input changed while being read')
+    session = json.loads(body)
+    if not isinstance(session, dict):
+        raise ValueError('Bench export must be an object')
+    return session
 
 
 def delta(current, reference):
@@ -15,8 +43,7 @@ def analyze_session(session, reference_quality='unknown'):
     for marker in markers:
         for channel in ('aircraft', 'gimbal'):
             angles = marker.get(channel)
-            if not isinstance(angles, list) or len(angles) != 3 or not all(
-                    type(v) in (int, float) and math.isfinite(v) for v in angles):
+            if not finite_vector(angles, 3):
                 raise ValueError('Invalid bench angle array')
         if marker.get('mode') != 'live':
             raise ValueError('Physical bench analysis requires live-mode annotations')
@@ -70,6 +97,8 @@ def analyze_session(session, reference_quality='unknown'):
                  'positive_direction': row['sign_for_positive_operator_action']} for row in rows}
     low_samples = [m['label'] for m in markers[start:] if
                    (m.get('aircraft_sample', {}).get('sample_count') or 0) < 3]
+    pair_summaries = [{'marker_label': marker.get('label'), **summarize_exported_gimbal_pairs(marker)}
+                      for marker in markers[start:]]
     return {'schema': 'neo2.bench-analysis.v1', 'session_id': session.get('session_id'),
             'recorded_markers': len(markers), 'analyzed_start_index': start,
             'duplicate_or_earlier_baselines': len(starts) - 1,
@@ -82,6 +111,10 @@ def analyze_session(session, reference_quality='unknown'):
             'final_vs_start_gimbal_deg': delta(markers[-1]['gimbal'], markers[start]['gimbal']),
             'physical_calibration_verified': False,
             'repeatability_established': False,
+            'gimbal_paired_evidence': {'markers': pair_summaries,
+                'retained_pairs_total': sum(row['retained_pairs'] for row in pair_summaries),
+                'quaternion_convention_verified': False,
+                'scope': 'Structural same-packet evidence inventory; no quaternion fit or physical calibration'},
             'sample_quality': {'marks_with_fewer_than_3_aircraft_samples': low_samples,
                                'limits': 'Single-sample zero spread does not establish stationary stability.'},
             'next_test': 'Repeat each direction three times with a measured angle reference, fixed heading for tilts, and a longer steady sample window.',

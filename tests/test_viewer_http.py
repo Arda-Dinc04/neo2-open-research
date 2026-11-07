@@ -109,6 +109,27 @@ class ViewerHttpTests(unittest.TestCase):
         self.assertNotIn('angles_deg', raw.decode())
         self.assertEqual(self.request('GET', '/api/routes')[0], 503)
 
+    def test_paired_evidence_is_only_in_full_export_not_polled_or_annotation_reply(self):
+        from test_bench_evidence import synthetic_state
+        app = ViewerApplication(synthetic_state(), Path(__file__).resolve().parents[1] / 'viewer')
+        headers = self.annotations()
+        headers['X-Viewer-Token'] = app.token
+        with patch.object(self.server, 'application', app), patch('viewer_server.time.monotonic', return_value=100.0):
+            status, _, raw = self.request('POST', '/api/bench/marker', json.dumps({'label': 'Stationary baseline'}), headers)
+            self.assertEqual(status, 200)
+            reply = json.loads(raw)['marker']['gimbal_sample']['paired_evidence']
+            self.assertEqual(reply['retained_sample_count'], 3)
+            self.assertNotIn('samples', reply)
+            status, _, raw = self.request('GET', '/api/state')
+            self.assertEqual(status, 200)
+            self.assertNotIn('samples', json.loads(raw)['bench']['markers'][0]['gimbal_sample']['paired_evidence'])
+            status, _, raw = self.request('GET', '/api/bench/export.json')
+            self.assertEqual(status, 200)
+            export = json.loads(raw)
+            self.assertEqual(len(export['markers'][0]['gimbal_sample']['paired_evidence']['samples']), 3)
+            self.assertNotIn(app.token, raw.decode())
+            self.assertFalse(export['physical_axes_verified'])
+
 
 if __name__ == '__main__':
     unittest.main()

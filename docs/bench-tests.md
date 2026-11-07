@@ -35,6 +35,10 @@ useful than guessing the motion from the 3D drawing.
 The recorder uses a two-second window, requiring at least three samples per
 channel spanning at least one second. A zero spread from a single sample cannot
 establish stability. Inspect the recorded spread even when a marker succeeds.
+New full exports retain a bounded subset of paired gimbal Euler/quaternion
+fields from the same accepted packets, with receipt offsets and source metadata.
+See [paired evidence and its limits](gimbal-paired-evidence.md). Older markers
+without these samples cannot establish a quaternion convention retroactively.
 The [first exploratory cycle](first-bench-findings.md) identified candidate
 axes; repeat with measured references before evaluating scale accuracy.
 

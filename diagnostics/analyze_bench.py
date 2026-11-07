@@ -2,11 +2,12 @@
 """Analyze a saved bench session; no device access or packet transmission."""
 import argparse
 import json
+import os
 from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'src'))
-from transport.bench_analysis import analyze_session
+from transport.bench_analysis import analyze_session, read_bench_session
 
 
 def main():
@@ -15,10 +16,15 @@ def main():
     parser.add_argument('--reference', choices=('unknown', 'estimated', 'measured'), default='unknown')
     parser.add_argument('--output', required=True, type=Path)
     args = parser.parse_args()
-    if args.session.stat().st_size > 5 * 1024 * 1024:
-        parser.error('Session exceeds 5 MiB bound')
-    result = analyze_session(json.loads(args.session.read_text()), args.reference)
-    with args.output.open('x') as handle:
+    try:
+        result = analyze_session(read_bench_session(args.session), args.reference)
+    except (OSError, ValueError, TypeError):
+        parser.exit(2, 'Could not analyze the regular bench export within the 64 MiB bound.\n')
+    try:
+        fd = os.open(args.output, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
+    except OSError:
+        parser.exit(2, 'Could not create a new private analysis file; check the output path.\n')
+    with os.fdopen(fd, 'w') as handle:
         json.dump(result, handle, indent=2, allow_nan=False)
         handle.write('\n')
     print(json.dumps({'complete_cycle': result['complete_first_cycle'],
