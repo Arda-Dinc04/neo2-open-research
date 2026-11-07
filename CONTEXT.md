@@ -41,6 +41,11 @@ External physical-component sources have their own provenance tier. A chip
 reported in another Neo 2 teardown is not a locally verified part, internal
 bus or logical-host owner. See docs/independent-teardown-findings.md.
 
+Offline FC GNSS status inspection retains the source-backed satellite-count
+byte and GPS bit as candidates, excluding coordinates. A GPS bit is not the
+SDK's complete location-availability test or an independently validated fix.
+See docs/gnss-status-findings.md; no GNSS field was added to the live viewer.
+
 The future **video adapter** provides attributed image observations from the
 separate camera process. Its transport/session/recording lifecycle is not owned
 by the orientation viewer. No exposure-time pose alignment is established.

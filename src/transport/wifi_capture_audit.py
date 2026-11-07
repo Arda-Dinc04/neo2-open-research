@@ -12,6 +12,7 @@ import os
 import stat
 
 from .duml_observer import Frame, crc8, crc16
+from .gnss_status import GnssStatusProfile
 
 MAX_FILE_BYTES = 1024 * 1024 * 1024
 MAX_LINE_BYTES = 65536
@@ -96,10 +97,13 @@ def forwarded_frame(outer):
     return frames[0]
 
 
-def audit_capture(path, *, profile_host=None):
-    """Return counts and a private reproducibility digest, never payloads or IDs."""
+def audit_capture(path, *, profile_host=None, include_gnss_status=False):
+    """Return header counts/digest; optionally aggregate non-position GNSS candidates."""
     if profile_host is not None and (type(profile_host) is not int or not 0 <= profile_host <= 255):
         raise ValueError('profile_host_must_be_logical_byte')
+    if type(include_gnss_status) is not bool:
+        raise ValueError('include_gnss_status_must_be_bool')
+    gnss = GnssStatusProfile() if include_gnss_status else None
     counters, routes = Counter(), Counter()
     profiles = {}
     positions = 0
@@ -147,6 +151,8 @@ def audit_capture(path, *, profile_host=None):
                 except ValueError:
                     counters['invalid_forwarding_envelopes'] += 1
                 for layer, packet in packets:
+                    if gnss is not None:
+                        gnss.observe(packet, carrier=layer)
                     key = (layer, packet.sender, packet.receiver, *packet.command,
                            packet.raw[8], len(packet.payload))
                     routes[key] += 1
@@ -198,7 +204,7 @@ def audit_capture(path, *, profile_host=None):
                     'command': f'{left[3]:02x}/{left[4]:02x}', 'flags': f'{left[5]:02x}',
                     'payload_length': left[6], 'observed_payload_sets_equal': True,
                     'packet_timing_or_delivery_pairing_verified': False})
-    return {'schema': 'neo2.wifi-route-audit.v1', 'mode': 'offline_saved_capture',
+    report = {'schema': 'neo2.wifi-route-audit.v1', 'mode': 'offline_saved_capture',
             'transport_profile': 'neo2_swudp_ack_mode_1_complete_frames',
             'source_sha256': digest.hexdigest(), 'counts': dict(counters),
             'scope': 'complete CRC-valid frame occurrences; no stream reassembly, FEC recovery, deduplication or physical ownership inference',
@@ -208,3 +214,6 @@ def audit_capture(path, *, profile_host=None):
                 'maximum_profiled_byte_positions': MAX_PROFILE_POSITIONS,
                 'maximum_distinct_payloads_per_profile': MAX_DISTINCT_PAYLOADS,
                 'profiles': variations, 'payload_set_fanout': fanout}}
+    if gnss is not None:
+        report['gnss_status'] = gnss.snapshot()
+    return report

@@ -54,6 +54,53 @@ class WifiCaptureAuditTests(unittest.TestCase):
         self.assertEqual({(r['layer'], r['sender'], r['command']) for r in result['routes']},
                          {('outer', '27', '51/01'), ('forwarded', '03', '03/55'), ('outer', '03', '03/55')})
 
+    def test_gnss_status_is_opt_in_keeps_carriers_separate_and_omits_position(self):
+        payload = bytearray(85)
+        payload[:16] = b'PRIVATE-LOCATION'
+        payload[33], payload[36] = 0x80, 17
+        inner = frame(bytes(payload), receiver=14, command=(3, 0x43))
+        attributes = bytearray(22)
+        attributes[4] = 2
+        outer = frame(inner + attributes, sender=0x27, receiver=0xee, command=(0x51, 1))
+        rows = [row(datagram(inner)), row(datagram(inner)), row(datagram(outer))]
+        baseline = self.audit(rows)
+        self.assertNotIn('gnss_status', baseline)
+        result = self.audit(rows, include_gnss_status=True)
+        status = result.pop('gnss_status')
+        self.assertEqual(result, baseline)
+        self.assertEqual(status['accepted_frame_occurrences'], 3)
+        self.assertEqual({c['carrier']:c['occurrences'] for c in status['cohorts']},
+                         {'outer': 2, 'forwarded': 1})
+        self.assertTrue(all(c['satellite_count_byte_min'] == 17 for c in status['cohorts']))
+        self.assertTrue(all(c['gps_valid_bit_set_occurrences'] == c['occurrences'] for c in status['cohorts']))
+        text = json.dumps(status)
+        self.assertNotIn('PRIVATE-LOCATION', text)
+        self.assertNotIn(b'PRIVATE-LOCATION'.hex(), text)
+        self.assertFalse(status['physical_fix_verified'])
+
+    def test_gnss_status_requires_valid_contained_plaintext_fc_pushes(self):
+        valid = frame(bytes(85), command=(3, 0x43))
+        corrupt = bytearray(valid)
+        corrupt[-1] ^= 1
+        attributes = bytearray(22)
+        attributes[4] = 2
+        rows = [row(datagram(valid), direction='tx'), row(datagram(valid, kind=2)),
+                row(datagram(valid, kind=3, coded=True)), row(datagram(corrupt)),
+                row(datagram(frame(corrupt + attributes, command=(0x51, 1)))),
+                row(datagram(frame(valid + attributes, command=(0x51, 1), flags=0x80))),
+                row(datagram(frame(bytes(85), command=(3, 0x43), flags=1))),
+                row(datagram(frame(bytes(85), command=(3, 0x43), flags=0x80))),
+                row(datagram(valid[:10])), row(datagram(valid[10:]))]
+        self.assertEqual(self.audit(rows, include_gnss_status=True)['gnss_status']['accepted_frame_occurrences'], 0)
+
+    def test_gnss_option_and_cohort_capacity_fail_explicitly(self):
+        with self.assertRaisesRegex(ValueError, 'include_gnss_status_must_be_bool'):
+            self.audit([], include_gnss_status=1)
+        rows = [row(datagram(frame(bytes(85), receiver=r, command=(3, 0x43)))) for r in (2, 14)]
+        with patch('transport.gnss_status.MAX_GNSS_COHORTS', 1):
+            with self.assertRaisesRegex(ValueError, 'gnss_cohort_limit_exceeded'):
+                self.audit(rows, include_gnss_status=True)
+
     def test_exact_bare_inner_compatibility_without_recursive_unwrapping(self):
         nested = frame(frame(), command=(0x51, 1))
         outer = frame(nested, command=(0x51, 1))

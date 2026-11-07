@@ -7,6 +7,8 @@ from collections import Counter
 import math
 import struct
 
+from .gnss_status import GnssStatusProfile, gnss_status_candidates
+
 
 def gimbal_fields(payload):
     if len(payload) != 50:
@@ -32,6 +34,7 @@ def fc_fields(payload):
             'relative_height_raw': struct.unpack_from('<h', payload, 16)[0],
             'relative_height_m_sdk_interpretation': struct.unpack_from('<h', payload, 16)[0] / 10,
             'velocity_raw': list(struct.unpack_from('<hhh', payload, 18)),
+            'gnss_status_candidates': gnss_status_candidates(payload),
             'sdk_status_candidates': {'controller_flags_raw': flags,
                                       'mode_code': payload[30] & 0x7f,
                                       'motors_on_bit': bool(flags & 8),
@@ -47,6 +50,7 @@ def component_summary(observations):
     rejected = Counter()
     legacy_battery_values = []
     orientation_flags_rejected = 0
+    gnss = GnssStatusProfile()
     for observation in observations:
         for frame in observation['frames']:
             commands[f'{frame.command[0]:02x}/{frame.command[1]:02x}'] += 1
@@ -64,6 +68,9 @@ def component_summary(observations):
                     legacy_battery_values.append(frame.payload[40])
             except ValueError:
                 rejected[f'{frame.command[0]:02x}/{frame.command[1]:02x}'] += 1
+                continue
+            if aircraft:
+                gnss.observe(frame, carrier='usb', interface=observation.get('interface'))
     def ranges(values, key):
         if not values:
             return None
@@ -72,6 +79,7 @@ def component_summary(observations):
     return {
         'scope': 'offline provisional decoder; no new commands; location bytes excluded',
         'physically_calibrated': False,
+        'gnss_status': gnss.snapshot(),
         'command_counts': dict(sorted(commands.items())),
         'gimbal': {'frames': len(gimbals),
                    'first': gimbals[0] if gimbals else None,

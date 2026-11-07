@@ -13,6 +13,9 @@ copies of the reviewed upstream GPL source files.
   receive-file implementation informed by those definitions. Pinned revision:
   `014e3ad0d3ee98fecba94dfa48fe512a217a155f`.
   https://github.com/smichea/dji-neo2-lan-client
+- FC GNSS field candidates additionally reference that pinned decoder and its
+  synthetic getter fixture; exact blob identifiers and interpretation limits
+  are in `docs/gnss-source-provenance.json`. No SDK binary is included or run.
 - The 17-byte synthetic framing vector in `tests/test_duml_observer.py` is
   attributed to that MIT project's `tests/test_duml.py`; it is never transmitted.
   It is a protocol test vector, not a device capture or flight validation.

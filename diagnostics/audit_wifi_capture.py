@@ -16,9 +16,12 @@ def main():
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--profile-host', type=lambda value: int(value, 16),
                         help='Logical source byte in hex; add bounded, value-free payload variation summaries')
+    parser.add_argument('--gnss-status', action='store_true',
+                        help='Add bounded FC satellite-byte/GPS-bit summaries; exclude coordinates')
     args = parser.parse_args()
     try:
-        report = audit_capture(args.capture, profile_host=args.profile_host)
+        report = audit_capture(args.capture, profile_host=args.profile_host,
+                               include_gnss_status=args.gnss_status)
         fd = os.open(args.output, os.O_CREAT | os.O_EXCL | os.O_WRONLY | os.O_NOFOLLOW, 0o600)
         with os.fdopen(fd, 'w') as output:
             json.dump(report, output, indent=2, allow_nan=False)

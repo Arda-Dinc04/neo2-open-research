@@ -1,0 +1,238 @@
+{
+  "schema": "neo2.gnss-reviewed-summary.v1",
+  "reviewed_date": "2026-11-07",
+  "mode": "offline_saved_capture",
+  "layout": {
+    "payload_length": 85,
+    "satellite_count_offset_bytes": 36,
+    "gps_flags_offset_bytes": 32,
+    "gps_flags_length_bytes": 4,
+    "gps_flags_mask_hex": "00008000"
+  },
+  "totals": {
+    "usb_frame_occurrences": 243,
+    "wifi_frame_occurrences": 7709,
+    "satellite_byte_zero_occurrences": 7952,
+    "gps_valid_bit_set_occurrences": 0
+  },
+  "windows": [
+    {
+      "window": "U1",
+      "transport": "usb",
+      "cohorts": [
+        {
+          "carrier": "usb",
+          "interface": 4,
+          "sender": "03",
+          "receiver": "0a",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 17,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 17,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "U2",
+      "transport": "usb",
+      "cohorts": [
+        {
+          "carrier": "usb",
+          "interface": 4,
+          "sender": "03",
+          "receiver": "0a",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 128,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 128,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "U3",
+      "transport": "usb",
+      "cohorts": [
+        {
+          "carrier": "usb",
+          "interface": 4,
+          "sender": "03",
+          "receiver": "0a",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 98,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 98,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "W1",
+      "transport": "wifi",
+      "cohorts": [
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 215,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 215,
+          "satellite_count_byte_distinct_count": 1
+        },
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 31,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 31,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "W2",
+      "transport": "wifi",
+      "cohorts": [
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 469,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 469,
+          "satellite_count_byte_distinct_count": 1
+        },
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 94,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 94,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "W3",
+      "transport": "wifi",
+      "cohorts": [
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 1001,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 1001,
+          "satellite_count_byte_distinct_count": 1
+        },
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 198,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 198,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    },
+    {
+      "window": "W4",
+      "transport": "wifi",
+      "cohorts": [
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 4744,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 4744,
+          "satellite_count_byte_distinct_count": 1
+        },
+        {
+          "carrier": "forwarded",
+          "interface": null,
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 957,
+          "gps_valid_bit_set_occurrences": 0,
+          "satellite_count_byte_min": 0,
+          "satellite_count_byte_max": 0,
+          "satellite_count_byte_zero_occurrences": 957,
+          "satellite_count_byte_distinct_count": 1
+        }
+      ]
+    }
+  ],
+  "position_coordinates_exported": false,
+  "private_capture_paths_and_digests_exported": false,
+  "physical_fix_verified": false,
+  "physical_chip_ownership_verified": false,
+  "device_io_performed": false,
+  "limits": [
+    "Occurrences are not deduplicated physical measurements.",
+    "Zero candidates do not establish receiver failure or lack of GNSS support.",
+    "GPS bit alone is not the SDK location-availability condition.",
+    "Physical fix reference and receiver ownership remain unverified."
+  ]
+}
