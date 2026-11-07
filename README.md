@@ -153,7 +153,8 @@ uses synthetic orientation and never opens USB. Neither is live validation.
   [Wi-Fi route comparison](docs/wifi-route-findings.md),
   [source-92 structural findings](docs/vision-route-structure.md),
   [passive packet findings](docs/passive-packet-findings.md),
-  [hardware photo map](docs/hardware-photo-map.md), [roadmap](docs/roadmap.md),
+  [hardware photo map](docs/hardware-photo-map.md),
+  [external teardown findings](docs/independent-teardown-findings.md), [roadmap](docs/roadmap.md),
   and [viewer validation](docs/viewer-validation.md).
 
 The orientation page's camera panel is a placeholder; this process opens no

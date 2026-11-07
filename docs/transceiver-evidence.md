@@ -1,4 +1,4 @@
-# DEP1 transceiver evidence — 6 November 2026
+# DEP1 transceiver evidence — reviewed 6–7 November 2026
 
 **No reviewed primary source maps a separate USB function, chipset, or DUML
 host route to DEP1.** The module's exact product identity and radio role are
@@ -46,6 +46,17 @@ does not establish the electrical signal path, endpoint ownership or DUML route.
 Block diagram, schematic and BOM entries remain metadata-only in the reviewed
 index. This is an access limit, not evidence that those documents or an
 internal USB connection do not exist. [Filing/exhibit locator](https://fccid.io/SS3-DEP125).
+
+DJI's [17 June 2025 confidentiality request, exhibit 8482217](https://device.report/m/4ab7440050317ce3f765f097468395ff87f82bd487839bae3ba6c938fc33ed9d.pdf)
+asks for indefinite withholding of the schematic, block diagram, theory of
+operation and BOM. The one-page PDF's SHA-256 is
+`4ab7440050317ce3f765f097468395ff87f82bd487839bae3ba6c938fc33ed9d`.
+This primary letter documents the request; it does not establish that the
+request was granted or that no copies exist elsewhere. It supplies no missing
+electrical or protocol map. See [source provenance](hardware-source-provenance.json).
+
+The aircraft teardown's [communications-package lead](independent-teardown-findings.md)
+does not identify the detachable module's chipset.
 
 Other DJI aircraft, goggles, O4 products or logical-host enum names can supply
 search leads. They cannot assign a Neo 2/DEP1 function by analogy. In

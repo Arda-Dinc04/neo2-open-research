@@ -18,6 +18,10 @@ copies of the reviewed upstream GPL source files.
   It is a protocol test vector, not a device capture or flight validation.
 - DJI manuals/specifications ground the distinction between aircraft Wi-Fi,
   installed DEP1/O4 hardware, and supported remote-controller/goggles use.
+- External hardware sources are cited in `docs/hardware-source-provenance.json`.
+  Teardown photographs/articles and manufacturer-filed source artifacts retain
+  their original rights; this bundle contains links and original research notes,
+  without redistributing those artifacts.
 
 Source URLs and inspected blob identifiers are in
 `docs/routing-source-provenance.json`. Referenced projects retain their own

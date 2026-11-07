@@ -18,6 +18,9 @@ comparison remains necessary to investigate ownership. See
 | Flight-controller logical host | `03 → 0a`, command `03/43`, 85-byte payloads; one exploratory body-motion cycle | Candidate A=pitch, B=roll, C=yaw and positive directions documented in [first bench findings](first-bench-findings.md) | Repeated measured axis/scale checks, reference frame, timing and calibration |
 | Gimbal logical host | `04 → 2a`, command `04/05`, 50-byte payloads; DJI specifies a two-axis tilt/roll mechanism | Provisional angle/quaternion fields and bounded [same-packet bench evidence retention](gimbal-paired-evidence.md); prior received norms near 1 | New retention is software-tested; physical repeat tests remain deferred. SDK yaw is not proof of a third motor; quaternion convention, stabilization frame and camera alignment remain unknown |
 | Main-board storage package | Manufacturer-filed aircraft photo page 7 visibly marks a package BIWIN / 3D NAND | Photo-supported brand/type marking only | Exact part number/capacity, bus and firmware/media ownership; this operator's board has not been inspected |
+| GNSS silicon, external teardown unit | [Figure 9 review and supplier cross-check](independent-teardown-findings.md): `UC6580I` | Externally photographed part identification | Local board/revision, wiring and receiver-data access; no direct GNSS API established |
+| Communications silicon, external teardown unit | [Figure 9 review](independent-teardown-findings.md): `AIC8800M80` prefix | Externally photographed family lead | Full ordering suffix, bus and radio roles; no DEP1/O4 or USB ownership assigned |
+| Processor, external teardown report | [Attributed source review](independent-teardown-findings.md) | Reported physical processor lead | Exact part, architecture, board revision and logical ownership remain unknown |
 | Air-side processor logical role | Address `48` (legacy type `8`, instance `2`) emitted `WA020` in `00/82` | Raw route/module-string observation | Physical chip, board, processor ownership, and meaning of the string |
 | Vision-related logical role | Address `92` (legacy type `18`, instance `4`) emitted constant 28-byte `03/ce` payloads in two idle windows | Structural profile and route census | Legacy command label is forbid-data information; Neo 2 payload meaning and physical sensors remain unknown; no range or LiDAR access established |
 | Source-92 Wi-Fi traffic | Four saved camera windows contain constant `03/ce` (28 bytes) and `24/71` (7 bytes) sent to `02` and `1c`, with equal content sets | Bounded [value-free structural profiles](vision-route-structure.md); no distance or health decoding | Model-specific seven-byte handler and independent physical reference; `24/08` birdview layout does not apply |
@@ -51,6 +54,9 @@ Use these labels in code, UI and contributions:
 - **Observed:** device state, descriptors or CRC-valid bytes were received.
 - **Source-backed interpretation:** a cited implementation explains a field,
   with the applicable packet layout and raw bytes retained privately.
+- **Externally reported / supplier-documented:** a cited teardown or manufacturer
+  document supports a physical finding, without confirming this operator's unit,
+  board revision, internal wiring or accessible host capability.
 - **Bench-validated:** an independent, recorded physical reference confirms
   an axis/sign/scale under stated conditions, with repetitions and limits.
 - **Unknown:** no suitable observation, layout or independent validation.
@@ -65,6 +71,7 @@ being replaced with zero.
 - [Local routing findings](usb_routing.md) and [source provenance](routing-source-provenance.json).
 - [Passive packet structure](passive-packet-findings.md) and [legacy-label provenance](packet-source-provenance.json).
 - [Physical hardware photo map and manufacturer sensing specifications](hardware-photo-map.md).
+- [External teardown findings](independent-teardown-findings.md) and [physical-source provenance](hardware-source-provenance.json).
 - [macOS driver-binding observations](macos-driver-bindings.md).
 - [Status candidates and rejected battery mapping](status-battery-findings.md).
 - [Wi-Fi camera-session route comparison](wifi-route-findings.md) and [reviewed aggregate counts](wifi-route-summary.json).

@@ -1,6 +1,6 @@
 # Physical hardware evidence map
 
-Reviewed 6 November 2026. Manufacturer-filed internal photographs are a record
+Reviewed 6–7 November 2026. Manufacturer-filed internal photographs are a record
 of the submitted equipment, not a teardown of this operator's individual unit.
 No case was opened and no hardware was modified during this source review.
 Photos remain outside the source release; the table links the public records.
@@ -44,8 +44,9 @@ manufacturer specifications, not results
 of this USB experiment. No LiDAR/range decoder or direct sensor API has been
 verified; the constant `92 → 2a` `03/ce` payload must not be labeled distance
 data on the basis of these specifications. Camera image-sensor part number,
-IMU/barometer parts, vision compute silicon, internal buses and radio chipset
-remain unknown.
+IMU/barometer parts, vision compute silicon, internal buses and DEP1 radio
+chipset remain unknown. Separate aircraft GNSS/communications part leads are
+documented below without assigning bus or logical ownership.
 
 The same specification names a 1/2-inch CMOS camera sensor and a mechanical
 gimbal with tilt and roll axes. It does not identify the imager part number.
@@ -60,3 +61,12 @@ passive packet profiles. Seek a legible component marking, readable schematic
 or manufacturer part document before naming silicon. Relate any sensor message
 to a source-backed layout and an independent bench reference before exposing
 physical units. A plausible value or legacy host name is insufficient.
+
+## Separate external teardown evidence
+
+An [independent teardown review](independent-teardown-findings.md) adds physical
+part leads beyond these FCC photographs. These come from a different source
+unit and do not identify the patch-like board on pages 12–13 or connect a chip
+to any observed DUML host. The exact processor part, DEP1 chipset, imager and
+IMU/barometer parts remain unresolved. Source artifact digests and limits are
+recorded in [hardware-source-provenance.json](hardware-source-provenance.json).

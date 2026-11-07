@@ -37,6 +37,10 @@ The **DEP1 digital transceiver** supplies the aircraft-side O4 path documented
 by DJI. Its presence does not establish a standalone Mac radio adapter. No
 specific USB interface or DUML host is yet assigned to it.
 
+External physical-component sources have their own provenance tier. A chip
+reported in another Neo 2 teardown is not a locally verified part, internal
+bus or logical-host owner. See docs/independent-teardown-findings.md.
+
 The future **video adapter** provides attributed image observations from the
 separate camera process. Its transport/session/recording lifecycle is not owned
 by the orientation viewer. No exposure-time pose alignment is established.

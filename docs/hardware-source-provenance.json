@@ -1,0 +1,84 @@
+{
+  "reviewed_date": "2026-11-07",
+  "scope": "External physical-component sources; no local teardown or physical-to-logical ownership established",
+  "sources": [
+    {
+      "id": "techanalye-neo2-figure9",
+      "source_kind": "first-hand teardown report and photograph",
+      "author": "Yoji Shimizu, Techanalye",
+      "publisher": "EE Times Japan",
+      "published_date": "2025-11-28",
+      "url": "https://eetimes.itmedia.co.jp/ee/articles/2511/27/news060_3.html",
+      "location": "Page 3, Neo 2 section and figure 9",
+      "artifact": {
+        "url": "https://image.itmedia.co.jp/ee/articles/2511/27/l_mm251127_tech09.jpg",
+        "media_type": "image/jpeg",
+        "size_bytes": 135060,
+        "sha256": "8eafdf370e366a3e354ab321d361682511f8f9f47d3bb8204b395f1e6f4f1043",
+        "inspection": "Original public image visually reviewed; not redistributed"
+      },
+      "findings": [
+        "GNSS package marking UC6580I",
+        "Communications package marking prefix AIC8800M80; full ordering suffix unverified",
+        "DJI processor reported by teardown author; exact part unverified"
+      ],
+      "limits": [
+        "External teardown unit; not operator's board or verified board revision",
+        "No assignment to a USB interface, DUML host or DEP1/O4",
+        "No processor instruction set, internal bus or firmware ownership established",
+        "Figure Bluetooth caption differs from DJI model specification"
+      ]
+    },
+    {
+      "id": "unicore-uc6580-product",
+      "source_kind": "silicon manufacturer's product documentation",
+      "url": "https://en.unicorecomm.com/products/dual-band-gps-chip-uc6580/",
+      "location": "Product introduction and UC6580I ordering row",
+      "findings": [
+        "UC6580I is an industrial QFN40 GNSS SoC family member"
+      ],
+      "limits": [
+        "Supplier capabilities do not establish Neo 2 wiring, enabled features or accessible protocols",
+        "Dynamic product page, not a pinned datasheet revision"
+      ]
+    },
+    {
+      "id": "dji-neo2-specs-bluetooth",
+      "source_kind": "aircraft manufacturer's specification",
+      "url": "https://www.dji.com/se/neo-2/specs?set_region=SE",
+      "location": "Bluetooth / Protocol",
+      "findings": [
+        "Manufacturer lists Bluetooth 5.2 for the aircraft"
+      ],
+      "limits": [
+        "Model-level specification does not identify silicon or reconcile figure caption"
+      ]
+    },
+    {
+      "id": "dep1-confidentiality-request",
+      "source_kind": "manufacturer-filed letter, hosted mirror",
+      "issuer": "SZ DJI Technology Co., Ltd",
+      "document_date": "2025-06-17",
+      "fcc_id": "SS3-DEP125",
+      "exhibit_id": "8482217",
+      "url": "https://device.report/m/4ab7440050317ce3f765f097468395ff87f82bd487839bae3ba6c938fc33ed9d.pdf",
+      "locator_url": "https://fccid.io/SS3-DEP125/Letter/Cofidentiality-Request-letter-8482217",
+      "artifact": {
+        "media_type": "application/pdf",
+        "pages": 1,
+        "size_bytes": 207124,
+        "sha256": "4ab7440050317ce3f765f097468395ff87f82bd487839bae3ba6c938fc33ed9d",
+        "inspection": "Original public PDF text reviewed; not redistributed"
+      },
+      "findings": [
+        "Applicant requests indefinite withholding of schematic, block diagram, theory of operation and BOM"
+      ],
+      "limits": [
+        "Request alone does not prove a grant or absence of copies elsewhere",
+        "No wiring, chipset or protocol information established by the letter"
+      ]
+    }
+  ],
+  "local_hardware_io_performed": false,
+  "copyrighted_source_artifacts_redistributed": false
+}
