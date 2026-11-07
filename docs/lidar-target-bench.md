@@ -116,8 +116,9 @@ The first attempt verified aircraft Wi-Fi and received protocol traffic but
 decoded no camera frames. The initial guide incorrectly required video; that
 gate was removed and regression-tested with fresh RX and no image. A second
 attempt retained 10,282 RX datagrams and encoded 619 camera frames over about
-23.3 seconds before a network-identity guard error. Whether an operator network
-change preceded that stop remained unconfirmed at this review.
+23.3 seconds before a network-identity guard error. The operator subsequently
+confirmed changing Wi-Fi or disconnecting that attempt. It does not establish
+a spontaneous link dropout.
 
 No target holds were recorded in either attempt. The second capture contains
 additional source-92 routes, including changing payloads, but has no associated
