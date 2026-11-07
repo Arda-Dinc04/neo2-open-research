@@ -157,6 +157,7 @@ uses synthetic orientation and never opens USB. Neither is live validation.
   [hardware photo map](docs/hardware-photo-map.md),
   [external teardown findings](docs/independent-teardown-findings.md), [roadmap](docs/roadmap.md),
   [offline GNSS status candidates](docs/gnss-status-findings.md),
+  [media metadata and clock evidence](docs/media-metadata-findings.md),
   and [viewer validation](docs/viewer-validation.md).
 
 The orientation page's camera panel is a placeholder; this process opens no

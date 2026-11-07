@@ -30,6 +30,10 @@ copies of the reviewed upstream GPL source files.
   Teardown photographs/articles and manufacturer-filed source artifacts retain
   their original rights; this bundle contains links and original research notes,
   without redistributing those artifacts.
+- `exiftool/exiftool`: source reference for recorded Neo 2 timed-metadata
+  mappings and their inheritance/limits. Exact reviewed version and other
+  byte-clock evidence sources are in `docs/media-source-provenance.json`.
+  No ExifTool code or external sample media is included.
 
 Source URLs and inspected blob identifiers are in
 `docs/routing-source-provenance.json`. Referenced projects retain their own

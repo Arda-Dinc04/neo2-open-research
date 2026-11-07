@@ -1,0 +1,138 @@
+{
+  "schema": "neo2.media-metadata-reviewed-summary.v1",
+  "reviewed_date": "2026-11-07",
+  "mode": "offline_saved_files",
+  "scope": "Bounded container probes and strict original-byte SEI inventories, not a complete-file decode or physical clock validation",
+  "windows": [
+    {
+      "window": "W1",
+      "retained_bytes": 1338333,
+      "format_name": "hevc",
+      "stream_count": 1,
+      "stream_codec": "hevc",
+      "inventory_status": "inventoried",
+      "inventory_failure_reason": null,
+      "raw_picture_candidates": 407,
+      "pictures_after_parameter_bootstrap": 407,
+      "candidate_pairs": 407,
+      "malformed_sei_nals": 1,
+      "encoded_interval_checksums": {
+        "available": 407,
+        "matched": 407,
+        "mismatched": 0,
+        "native_zero_bypass": 0
+      },
+      "recognized_sei_layouts": [
+        {
+          "payload_type": 240,
+          "payload_size": 25,
+          "count": 407
+        },
+        {
+          "payload_type": 256,
+          "payload_size": 92,
+          "count": 407
+        }
+      ]
+    },
+    {
+      "window": "W2",
+      "retained_bytes": 22764198,
+      "format_name": "hevc",
+      "stream_count": 1,
+      "stream_codec": "hevc",
+      "inventory_status": "inventoried",
+      "inventory_failure_reason": null,
+      "raw_picture_candidates": 1362,
+      "pictures_after_parameter_bootstrap": 1329,
+      "candidate_pairs": 1362,
+      "malformed_sei_nals": 167,
+      "encoded_interval_checksums": {
+        "available": 1362,
+        "matched": 1362,
+        "mismatched": 0,
+        "native_zero_bypass": 0
+      },
+      "recognized_sei_layouts": [
+        {
+          "payload_type": 240,
+          "payload_size": 25,
+          "count": 1362
+        },
+        {
+          "payload_type": 256,
+          "payload_size": 92,
+          "count": 1362
+        }
+      ]
+    },
+    {
+      "window": "W3",
+      "retained_bytes": 73673170,
+      "format_name": "hevc",
+      "stream_count": 1,
+      "stream_codec": "hevc",
+      "inventory_status": "unsupported_by_pinned_inventory",
+      "inventory_failure_reason": "video_clock_multilayer_not_supported",
+      "raw_picture_candidates": null,
+      "pictures_after_parameter_bootstrap": null,
+      "candidate_pairs": null,
+      "malformed_sei_nals": null,
+      "encoded_interval_checksums": null,
+      "recognized_sei_layouts": null
+    },
+    {
+      "window": "W4",
+      "retained_bytes": 359206127,
+      "format_name": "hevc",
+      "stream_count": 1,
+      "stream_codec": "hevc",
+      "inventory_status": "inventoried",
+      "inventory_failure_reason": null,
+      "raw_picture_candidates": 13960,
+      "pictures_after_parameter_bootstrap": 13855,
+      "candidate_pairs": 13960,
+      "malformed_sei_nals": 1731,
+      "encoded_interval_checksums": {
+        "available": 13960,
+        "matched": 13960,
+        "mismatched": 0,
+        "native_zero_bypass": 0
+      },
+      "recognized_sei_layouts": [
+        {
+          "payload_type": 240,
+          "payload_size": 25,
+          "count": 13960
+        },
+        {
+          "payload_type": 256,
+          "payload_size": 92,
+          "count": 13960
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "retained_files": 4,
+    "inventoried_files": 3,
+    "unsupported_files": 1,
+    "candidate_pairs_in_inventoried_files": 15729,
+    "matching_checksums_in_inventoried_files": 15729
+  },
+  "raw_ticks_exported": false,
+  "raw_metadata_exported": false,
+  "private_source_paths_and_digests_exported": false,
+  "clock_unit_verified": false,
+  "exposure_alignment_verified": false,
+  "decoded_frame_identity_verified": false,
+  "original_onboard_mp4_inspected": false,
+  "device_io_performed": false,
+  "camera_code_modified": false,
+  "limits": [
+    "Unsupported-file counts are null, not zero.",
+    "Strict multilayer rejection does not establish true multilayer coding or metadata absence.",
+    "Byte-interval checksum agreement is not exposure-time or decoded-image proof.",
+    "HEVC vendor fields and MP4 timed metadata are different evidence domains."
+  ]
+}

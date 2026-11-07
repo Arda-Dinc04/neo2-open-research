@@ -1,0 +1,58 @@
+{
+  "reviewed_date": "2026-11-07",
+  "scope": "Recorded-media parser mappings and offline container/SEI evidence only",
+  "sources": [
+    {
+      "url": "https://github.com/exiftool/exiftool/blob/9b8664dfcf2c609d3cc8925d380e98ad2a379f9b/lib/Image/ExifTool/DJI.pm",
+      "ref": "9b8664dfcf2c609d3cc8925d380e98ad2a379f9b",
+      "git_blob_sha1": "96b7cd6c25c30edb156de17d9fb15ba8a5631692",
+      "scope": "Protocol recognition, Neo1-to-Neo2 inheritance, Neo2 GPS-unit initialization and metadata subtables",
+      "limits": "Source inspected only; no local original MP4 or ExifTool execution; mappings are not physical conventions"
+    },
+    {
+      "url": "https://github.com/exiftool/exiftool/issues/440#issuecomment-6426220827",
+      "comment_date": "2026-10-26",
+      "source_kind": "Parser maintainer statement",
+      "scope": "Basic Neo2 support based on Neo1 mappings",
+      "limits": "Mutable comment, not validation of this aircraft; no external sample media downloaded"
+    },
+    {
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/video_clock.py",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f",
+      "git_blob_sha1": "a05a5befc6ba2116514dd178231ac2013eb66c03",
+      "scope": "Strict saved-HEVC inventory, suffix-SEI candidate layouts and encoded-interval checksum",
+      "limits": "Three files accepted, W3 rejected; clock unit, exposure meaning and PC alignment unverified"
+    },
+    {
+      "url": "https://github.com/smichea/dji-neo2-lan-client/blob/014e3ad0d3ee98fecba94dfa48fe512a217a155f/src/neo2_control/hevc.py",
+      "ref": "014e3ad0d3ee98fecba94dfa48fe512a217a155f",
+      "git_blob_sha1": "e854fd1222ed400feba8d579715427a4f2038a8a",
+      "scope": "Bounded Annex-B and SEI framing used by the inventory",
+      "limits": "Framing is not physical metadata validation"
+    }
+  ],
+  "local_probe": {
+    "tool": "ffprobe",
+    "version": "8.0.1",
+    "probesize_bytes": 1048576,
+    "analyzeduration_microseconds": 1000000,
+    "scope": "Container/stream identification, not complete-file decoding"
+  },
+  "source_media_redistributed": false,
+  "raw_metadata_values_exported": false,
+  "device_io_performed": false,
+  "camera_code_modified": false,
+  "exposure_alignment_verified": false,
+  "analysis_verification": {
+    "accepted_inventories_reproduced_with_matching_original_byte_digests": 3,
+    "upstream_focused_test_file": "tests/test_video_clock.py",
+    "upstream_tests_passed": 29,
+    "upstream_tests_failed": 1,
+    "failing_test": "test_cli_writes_new_private_json_and_refuses_overwrite",
+    "failure_reason": "ModuleNotFoundError: spatial_capture on the upstream CLI path",
+    "direct_reader_used_for_analysis": true,
+    "upstream_cli_installation_verified": false,
+    "dependency_installation_performed": false,
+    "main_runtime_changed": false
+  }
+}

@@ -88,6 +88,15 @@ Monotonic times are comparable only when the processes share the same host
 clock/time origin, or a measured mapping is provided. A frame's camera
 timestamp must remain absent/unverified until its clock semantics are known.
 
+The [saved-media review](media-metadata-findings.md) distinguishes live HEVC
+vendor SEI fields from onboard MP4 `djmd`/`dbgi` timed metadata. Three saved
+files have matching byte-interval checksums for candidate SEI pairs; another
+is unsupported by the pinned inventory. Neither establishes exposure time.
+Keep raw candidates in a separately attributed producer clock domain with
+unknown units unavailable. Do not apply an onboard metadata parser's timestamp
+conversion to live SEI ticks or silently replace missing physical observations
+with protobuf default zeros. The frame contract's clock fields remain unchanged.
+
 Do not attach an aircraft/gimbal reading to an image as an exposure-time pose
 merely because it is the nearest host timestamp. Camera-to-body transform,
 gimbal reference frame, interpolation, sensor delays and camera exposure time
