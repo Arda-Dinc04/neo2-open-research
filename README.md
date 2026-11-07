@@ -146,6 +146,7 @@ uses synthetic orientation and never opens USB. Neither is live validation.
 - [Integration contract](docs/integration.md): independent transport owners,
   attributed frames and ages; no false exposure-time synchronization.
 - [Component evidence](docs/components.md), [routing findings](docs/usb_routing.md),
+  [Wi-Fi route comparison](docs/wifi-route-findings.md),
   [passive packet findings](docs/passive-packet-findings.md),
   [hardware photo map](docs/hardware-photo-map.md), [roadmap](docs/roadmap.md),
   and [viewer validation](docs/viewer-validation.md).

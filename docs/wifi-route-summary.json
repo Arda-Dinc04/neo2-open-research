@@ -1,0 +1,397 @@
+{
+  "schema": "neo2.reviewed-wifi-route-summary.v1",
+  "reviewed_date": "2026-11-07",
+  "provenance": "Four actual, previously recorded aircraft Wi-Fi camera sessions; offline audit only. Original captures remain private.",
+  "scope": "Complete CRC-valid DUML frame occurrences in validated saved RX SWUDP datagrams; no stream reassembly, FEC recovery, deduplication, physical calibration or chip-ownership inference.",
+  "windows": [
+    {
+      "label": "W1",
+      "session_duration_seconds": 27.229,
+      "rx_datagrams": 1787,
+      "swudp_status_datagrams": 647,
+      "video_datagrams_skipped": 1139,
+      "routes": [
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "02",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 15
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 215
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 15
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 31
+        },
+        {
+          "layer": "forwarded",
+          "sender": "04",
+          "receiver": "02",
+          "command": "04/05",
+          "flags": "00",
+          "payload_length": 50,
+          "occurrences": 210
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 42
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 110
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 42
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 110
+        }
+      ],
+      "receipt_time_video_overlap": {
+        "video_datagram_span_seconds": 24.751027,
+        "fc_occurrences_during_span": 246,
+        "gimbal_occurrences_during_span": 209,
+        "battery_occurrences_during_span": 28,
+        "exposure_time_synchronized": false
+      }
+    },
+    {
+      "label": "W2",
+      "session_duration_seconds": 47.672,
+      "rx_datagrams": 18854,
+      "swudp_status_datagrams": 1943,
+      "video_datagrams_skipped": 16910,
+      "routes": [
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "02",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 47
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 469
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 47
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 94
+        },
+        {
+          "layer": "forwarded",
+          "sender": "04",
+          "receiver": "02",
+          "command": "04/05",
+          "flags": "00",
+          "payload_length": 50,
+          "occurrences": 470
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 91
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 234
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 91
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 234
+        }
+      ],
+      "receipt_time_video_overlap": {
+        "video_datagram_span_seconds": 47.219406,
+        "fc_occurrences_during_span": 563,
+        "gimbal_occurrences_during_span": 470,
+        "battery_occurrences_during_span": 94,
+        "exposure_time_synchronized": false
+      }
+    },
+    {
+      "label": "W3",
+      "session_duration_seconds": 100.699,
+      "rx_datagrams": 56249,
+      "swudp_status_datagrams": 4002,
+      "video_datagrams_skipped": 52246,
+      "routes": [
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "02",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 100
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 1001
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 100
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 198
+        },
+        {
+          "layer": "forwarded",
+          "sender": "04",
+          "receiver": "02",
+          "command": "04/05",
+          "flags": "00",
+          "payload_length": 50,
+          "occurrences": 1000
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 194
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 500
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 194
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 500
+        }
+      ],
+      "receipt_time_video_overlap": {
+        "video_datagram_span_seconds": 100.255301,
+        "fc_occurrences_during_span": 1199,
+        "gimbal_occurrences_during_span": 1000,
+        "battery_occurrences_during_span": 200,
+        "exposure_time_synchronized": false
+      }
+    },
+    {
+      "label": "W4",
+      "session_duration_seconds": 478.925,
+      "rx_datagrams": 275176,
+      "swudp_status_datagrams": 19018,
+      "video_datagrams_skipped": 256157,
+      "routes": [
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "02",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 479
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 4744
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "0e",
+          "command": "03/55",
+          "flags": "00",
+          "payload_length": 10,
+          "occurrences": 479
+        },
+        {
+          "layer": "forwarded",
+          "sender": "03",
+          "receiver": "aa",
+          "command": "03/43",
+          "flags": "00",
+          "payload_length": 85,
+          "occurrences": 957
+        },
+        {
+          "layer": "forwarded",
+          "sender": "04",
+          "receiver": "02",
+          "command": "04/05",
+          "flags": "00",
+          "payload_length": 50,
+          "occurrences": 4744
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 917
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "02",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 2373
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "03/ce",
+          "flags": "00",
+          "payload_length": 28,
+          "occurrences": 917
+        },
+        {
+          "layer": "forwarded",
+          "sender": "92",
+          "receiver": "1c",
+          "command": "24/71",
+          "flags": "00",
+          "payload_length": 7,
+          "occurrences": 2372
+        }
+      ],
+      "receipt_time_video_overlap": {
+        "video_datagram_span_seconds": 478.29876,
+        "fc_occurrences_during_span": 5700,
+        "gimbal_occurrences_during_span": 4744,
+        "battery_occurrences_during_span": 958,
+        "exposure_time_synchronized": false
+      }
+    }
+  ],
+  "transport_profile": "neo2_swudp_ack_mode_1_complete_frames"
+}

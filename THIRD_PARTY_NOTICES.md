@@ -8,7 +8,9 @@ copies of the reviewed upstream GPL source files.
   names and USB selection conventions. Those labels do not prove Neo 2 support.
   https://github.com/o-gs/dji-firmware-tools
 - `smichea/dji-neo2-lan-client` (MIT): source evidence for the receive-only USB
-  idle baseline and provisional gimbal/FC field layouts. Pinned revision:
+  idle baseline, provisional gimbal/FC/battery field layouts, SWUDP envelope
+  and WLM forwarding wire structure. The offline Wi-Fi census is an original
+  receive-file implementation informed by those definitions. Pinned revision:
   `014e3ad0d3ee98fecba94dfa48fe512a217a155f`.
   https://github.com/smichea/dji-neo2-lan-client
 - The 17-byte synthetic framing vector in `tests/test_duml_observer.py` is

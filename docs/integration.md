@@ -13,6 +13,14 @@ may require a source-backed Wi-Fi attitude observation path or another validated
 transport. The current read-only frame boundary remains independent of that
 future transport choice.
 
+Offline review subsequently found FC `03/43` (85-byte payloads), gimbal `04/05`
+(50-byte payloads) and battery `03/55` (10-byte payloads) inside the saved camera
+sessions' Wi-Fi forwarding envelopes. See [the route comparison](wifi-route-findings.md).
+This is evidence for using the camera owner's received protocol data in a
+future adapter without adding aircraft USB. The adapter and a live physical
+check remain required; saved header/layout matches do not establish synchronized
+pose or calibrated sensor values.
+
 The separate camera worktree has since verified live browser WebRTC through a
 local MediaMTX bridge: 1280 × 720 at about 30 fps during an operator-ended
 100.563-second preview. It retains JPEG fallback and uses an English viewer.
