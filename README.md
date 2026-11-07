@@ -149,6 +149,9 @@ uses synthetic orientation and never opens USB. Neither is live validation.
 
 ## Workstreams
 
+- [Stationary target experiment](docs/lidar-target-bench.md): a local Wi-Fi
+  capture guide with timed, measured target annotations; no verified LiDAR
+  distance decoder or point cloud yet.
 - [Compact OpenNeo aircraft](docs/compact-openneo-build-brief.md): original
   mechanical/electrical design, component budgets and a reproducible build;
   Neo-like size is required from the first prototype.
